@@ -1,0 +1,10 @@
+html, body {
+  padding: 0;
+  margin: 0;
+}
+.pdf-container {
+  width: 100%;
+}
+.pdf-canvas {
+  width: 100%;
+}
