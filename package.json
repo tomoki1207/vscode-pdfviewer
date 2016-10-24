@@ -16,7 +16,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/tomoki1207/vscode-pdfviewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
   },
   "activationEvents": [
     "onLanguage:pdf"
