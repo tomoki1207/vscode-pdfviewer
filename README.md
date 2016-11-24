@@ -5,8 +5,8 @@ Display pdf in VSCode.
 
 ## Known Issues
 
-- [] Displayed raw string for a moment before preview.
-- [] Some pdf files opened as binary.
+- [ ] Displayed raw string for a moment before preview.
+- [ ] Some pdf files opened as binary.
 
 ## Change log
 
