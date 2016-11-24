@@ -43,13 +43,13 @@ function showPreview(document: vscode.TextDocument): void {
 function buildPreviewUri(uri: vscode.Uri): vscode.Uri {
   return uri.with({
     scheme: "pdf-preview",
-    path: uri.path + ".rendered",
+    path: uri.path + ".rendered.pdf",
     query: uri.toString(),
   });
 }
 
 function isPdfDocument(document: vscode.TextDocument): boolean {
-  return document.languageId === "pdf";
+  return document.languageId === "pdf" && document.uri.scheme !== "pdf-preview";
 }
 
 export function deactivate() {

@@ -10,9 +10,13 @@ Display pdf in VSCode.
 
 ## Change log
 
-### 0.0.1
+### 0.0.1 (2016/10/25)
 
 Initial release.
+
+### 0.0.2 (2016/11/24)
+
+consistent file icon
 
 ## License
 Please see [LICENSE](./LICENSE)
