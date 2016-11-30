@@ -7,10 +7,10 @@ const path = require("path");
 
 export function activate(context: vscode.ExtensionContext) {
 
-  let provider = new PdfDocumentContentProvider(context);
-  vscode.workspace.registerTextDocumentContentProvider("pdf-preview", provider);
+  const provider = new PdfDocumentContentProvider(context);
+  const registerProvider = vscode.workspace.registerTextDocumentContentProvider("pdf-preview", provider);
 
-  vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
+  const openedEvent = vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
     showPreview(document);
   });
 
@@ -18,6 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
   if (vscode.window.activeTextEditor) {
     showPreview(vscode.window.activeTextEditor.document);
   }
+
+  context.subscriptions.push(registerProvider, openedEvent);
 }
 
 function showPreview(document: vscode.TextDocument): void {
@@ -30,14 +32,12 @@ function showPreview(document: vscode.TextDocument): void {
   // close pdf raw file  
   let basename = path.basename(uri.fsPath);
   let columns = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
-  vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-
-  // preview
-  vscode.commands.executeCommand("vscode.previewHtml",
-    buildPreviewUri(uri),
-    columns,
-    basename
-  ).then(null, vscode.window.showErrorMessage);
+  vscode.commands.executeCommand("workbench.action.closeActiveEditor")
+    .then(() => vscode.commands.executeCommand("vscode.previewHtml",
+      buildPreviewUri(uri),
+      columns,
+      basename))
+    .then(null, vscode.window.showErrorMessage);
 }
 
 function buildPreviewUri(uri: vscode.Uri): vscode.Uri {
