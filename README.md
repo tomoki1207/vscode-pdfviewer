@@ -12,11 +12,16 @@ Display pdf in VSCode.
 
 ### 0.0.1 (2016/10/25)
 
-Initial release.
+- Initial release.
 
 ### 0.0.2 (2016/11/24)
 
-consistent file icon
+- consistent file icon
+
+### 0.1.0 (2016/11/30)
+
+- Add extension icon.
+- Use all PDF.js [Pre-built](https://mozilla.github.io/pdf.js/getting_started/#download) files.
 
 ## License
 Please see [LICENSE](./LICENSE)
