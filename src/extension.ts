@@ -11,25 +11,31 @@ export function activate(context: vscode.ExtensionContext) {
   const registerProvider = vscode.workspace.registerTextDocumentContentProvider("pdf-preview", provider);
 
   const openedEvent = vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
-    showPreview(document);
+    showDocumentPreview(document);
+  });
+
+  const previewCmd = vscode.commands.registerCommand('extension.pdf-preview', (uri: vscode.Uri) => {
+    showPreview(uri);
   });
 
   // for pdf file already opend.
   if (vscode.window.activeTextEditor) {
-    showPreview(vscode.window.activeTextEditor.document);
+    showDocumentPreview(vscode.window.activeTextEditor.document);
   }
 
-  context.subscriptions.push(registerProvider, openedEvent);
+  context.subscriptions.push(registerProvider, openedEvent, previewCmd);
 }
 
-function showPreview(document: vscode.TextDocument): void {
-  if (!isPdfDocument(document)) {
-    return;
+function showDocumentPreview(document: vscode.TextDocument): void {
+  if (document.languageId === "pdf") {
+    showPreview(document.uri);
   }
+}
 
-  let uri = document.uri;
+function showPreview(uri: vscode.Uri): void {
+  if (uri.scheme === "pdf-preview")
+    return;
 
-  // close pdf raw file  
   let basename = path.basename(uri.fsPath);
   let columns = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
   vscode.commands.executeCommand("workbench.action.closeActiveEditor")
@@ -46,10 +52,6 @@ function buildPreviewUri(uri: vscode.Uri): vscode.Uri {
     path: uri.path + ".rendered.pdf",
     query: uri.toString(),
   });
-}
-
-function isPdfDocument(document: vscode.TextDocument): boolean {
-  return document.languageId === "pdf" && document.uri.scheme !== "pdf-preview";
 }
 
 export function deactivate() {
