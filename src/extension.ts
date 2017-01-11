@@ -27,8 +27,10 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function showDocumentPreview(document: vscode.TextDocument): void {
-  if (document.languageId === "pdf") {
-    showPreview(document.uri);
+  if (document.languageId === "pdf" && document.uri.scheme !== "pdf-preview") {
+    vscode.commands.executeCommand("workbench.action.closeActiveEditor").then(() => {
+      showPreview(document.uri);
+    });
   }
 }
 
@@ -38,12 +40,11 @@ function showPreview(uri: vscode.Uri): void {
 
   let basename = path.basename(uri.fsPath);
   let columns = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
-  vscode.commands.executeCommand("workbench.action.closeActiveEditor")
-    .then(() => vscode.commands.executeCommand("vscode.previewHtml",
-      buildPreviewUri(uri),
-      columns,
-      basename))
-    .then(null, vscode.window.showErrorMessage);
+  vscode.commands.executeCommand("vscode.previewHtml",
+    buildPreviewUri(uri),
+    columns,
+    basename)
+  .then(null, vscode.window.showErrorMessage);
 }
 
 function buildPreviewUri(uri: vscode.Uri): vscode.Uri {
