@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
     showDocumentPreview(document);
   });
 
-  const previewCmd = vscode.commands.registerCommand('extension.pdf-preview', (uri: vscode.Uri) => {
+  const previewCmd = vscode.commands.registerCommand("extension.pdf-preview", (uri: vscode.Uri) => {
     showPreview(uri);
   });
 
