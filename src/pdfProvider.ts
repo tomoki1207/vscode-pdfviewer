@@ -24,7 +24,7 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
 
     const body = [
       '<body>',
-      `<iframe id="pdf-viewer" src="${this.getPath("lib/web/viewer.html")}?file=${docUri}">`,
+      `<iframe id="pdf-viewer" src="file://${this.getPath("lib/web/viewer.html")}?file=${docUri}">`,
       '</body>'
     ].join("\n");
 
