@@ -23,7 +23,8 @@
     "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
   },
   "activationEvents": [
-    "onLanguage:pdf"
+    "onLanguage:pdf",
+    "onCommand:extension.pdf-preview"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -46,7 +47,22 @@
         "scopeName": "text.plain, text.plain.pdf",
         "path": "./syntaxes/pdf.tmLanguage"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "extension.pdf-preview",
+        "title": "View PDF"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == pdf",
+          "command": "extension.pdf-preview",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
