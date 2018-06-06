@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.3.0 (2018/6/6)
+
+- Upgrade PDF.js to 1.9.426 (#23)
+
+### Thank you
+- @Kampfgnom bump to pdf.js version #23
+
 ## 0.2.0 (2017/1/12)
 
 - Fixed displaying on linux (#5)
