@@ -9,7 +9,6 @@ Display pdf in VSCode.
 - [ ] Some pdf files opened as binary.
 
 ## Change log
-
 See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
