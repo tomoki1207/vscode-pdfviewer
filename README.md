@@ -1,6 +1,7 @@
 # pdf
 
 Display pdf in VSCode.
+
 ![screenshot](https://raw.githubusercontent.com/tomoki1207/vscode-pdfviewer/images/screenshot.png)
 
 ## Known Issues
