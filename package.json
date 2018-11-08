@@ -5,7 +5,7 @@
   "version": "0.3.0",
   "publisher": "tomoki1207",
   "engines": {
-    "vscode": "^1.5.0"
+    "vscode": "^1.23.0"
   },
   "categories": [
     "Programming Languages"
@@ -70,6 +70,9 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "package": "vsce package"
   },
+  "dependencies": {
+    "vscode": "^1.1.21"
+  },
   "devDependencies": {
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
@@ -77,7 +80,6 @@
     "tslint": "^3.15.1",
     "typescript": "^2.9.1",
     "typings": "^1.4.0",
-    "vsce": "^1.42.0",
-    "vscode": "^1.1.18"
+    "vsce": "^1.42.0"
   }
 }

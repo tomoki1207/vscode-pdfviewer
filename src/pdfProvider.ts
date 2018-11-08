@@ -12,19 +12,19 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
   }
 
   public provideTextDocumentContent(uri: vscode.Uri): string {
-    const docUri = encodeURIComponent(uri.query);
+    const docUri = encodeURIComponent(uri.path);
     const head = [
       '<!DOCTYPE html>',
       '<html>',
       '<head>',
       '<meta http-equiv="Content-type" content="text/html;charset=UTF-8">',
-      `<link rel="stylesheet" type="text/css" href="${this.getPath("lib/pdf.css")}">`,
+      `<link rel="stylesheet" type="text/css" href="vscode-resource://${this.getPath("lib/pdf.css")}">`,
       '</head>'
     ].join("\n");
 
     const body = [
       '<body>',
-      `<iframe id="pdf-viewer" src="file://${this.getPath("lib/web/viewer.html")}?file=${docUri}">`,
+      `<iframe id="pdf-viewer" src="vscode-resource://${this.getPath("lib/web/viewer.html")}?file=vscode-resource://${docUri}">`,
       '</body>'
     ].join("\n");
 

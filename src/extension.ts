@@ -1,58 +1,77 @@
 "use strict";
 
-import * as vscode from "vscode";
-import { PdfDocumentContentProvider } from "./pdfProvider";
+import * as vscode from 'vscode';
+import {
+  ExtensionContext,
+  TextDocument,
+  Uri,
+  WebviewPanel,
+} from 'vscode';
+import { PdfDocumentContentProvider } from './pdfProvider';
 
 const path = require("path");
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
 
+  const openedPanels: WebviewPanel[] = [];
   const provider = new PdfDocumentContentProvider(context);
-  const registerProvider = vscode.workspace.registerTextDocumentContentProvider("pdf-preview", provider);
 
-  const openedEvent = vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
-    showDocumentPreview(document);
+  const revealIfAlreadyOpened = (uri: Uri): boolean => {
+    const opened = openedPanels.find(panel => panel.viewType === uri.fsPath);
+    if (!opened)
+      return false;
+    opened.reveal(opened.viewColumn);
+    return true;
+  }
+
+  const registerPanel = (panel: WebviewPanel): void => {
+    panel.onDidDispose(() => {
+      openedPanels.splice(openedPanels.indexOf(panel), 1);
+    })
+    openedPanels.push(panel);
+  }
+
+  const previewAndCloseSrcDoc = async (document: TextDocument): Promise<void> => {
+    if (document.languageId === "pdf") {
+      vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+      if (!revealIfAlreadyOpened(document.uri)) {
+        registerPanel(showPreview(document.uri, provider));
+      }
+    }
+  }
+
+  const openedEvent = vscode.workspace.onDidOpenTextDocument((document: TextDocument) => {
+    previewAndCloseSrcDoc(document);
   });
 
-  const previewCmd = vscode.commands.registerCommand("extension.pdf-preview", (uri: vscode.Uri) => {
-    showPreview(uri);
+  const previewCmd = vscode.commands.registerCommand("extension.pdf-preview", (uri: Uri) => {
+    if(!revealIfAlreadyOpened(uri)) {
+      registerPanel(showPreview(uri, provider));
+    }
   });
 
-  // for pdf file already opend.
+  // If pdf file is already opened when load workspace.
   if (vscode.window.activeTextEditor) {
-    showDocumentPreview(vscode.window.activeTextEditor.document);
+    previewAndCloseSrcDoc(vscode.window.activeTextEditor.document);
   }
 
-  context.subscriptions.push(registerProvider, openedEvent, previewCmd);
+  context.subscriptions.push(openedEvent, previewCmd);
 }
 
-function showDocumentPreview(document: vscode.TextDocument): void {
-  if (document.languageId === "pdf" && document.uri.scheme !== "pdf-preview") {
-    vscode.commands.executeCommand("workbench.action.closeActiveEditor").then(() => {
-      showPreview(document.uri);
-    });
-  }
-}
-
-function showPreview(uri: vscode.Uri): void {
-  if (uri.scheme === "pdf-preview")
-    return;
-
-  let basename = path.basename(uri.fsPath);
-  let columns = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
-  vscode.commands.executeCommand("vscode.previewHtml",
-    buildPreviewUri(uri),
-    columns,
-    basename)
-  .then(null, vscode.window.showErrorMessage);
-}
-
-function buildPreviewUri(uri: vscode.Uri): vscode.Uri {
-  return uri.with({
-    scheme: "pdf-preview",
-    path: uri.path + ".rendered.pdf",
-    query: uri.toString(),
-  });
+function showPreview(uri: Uri, provider: PdfDocumentContentProvider): WebviewPanel {
+  const basename = path.basename(uri.fsPath);
+  const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
+  const panel = vscode.window.createWebviewPanel(
+    uri.fsPath, // treated as identity
+    basename,
+    column,
+    {
+      enableScripts: true,
+      retainContextWhenHidden: true
+    }
+  );
+  panel.webview.html = provider.provideTextDocumentContent(uri);
+  return panel;
 }
 
 export function deactivate() {
