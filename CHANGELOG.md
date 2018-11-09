@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2018/11/9)
+
+- Migrate vscode internal api. Due to [Microsoft/vscode#62630](https://github.com/Microsoft/vscode/issues/62630)
+- Upgrade PDF.js to 2.1.36
+
 ## 0.3.0 (2018/6/6)
 
 - Upgrade PDF.js to 1.9.426 (#23)
