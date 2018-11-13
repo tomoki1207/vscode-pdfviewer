@@ -35,7 +35,7 @@ export function activate(context: ExtensionContext) {
     if (document.languageId === "pdf") {
       vscode.commands.executeCommand("workbench.action.closeActiveEditor");
       if (!revealIfAlreadyOpened(document.uri)) {
-        registerPanel(showPreview(document.uri, provider));
+        registerPanel(showPreview(context, document.uri, provider));
       }
     }
   }
@@ -46,7 +46,7 @@ export function activate(context: ExtensionContext) {
 
   const previewCmd = vscode.commands.registerCommand("extension.pdf-preview", (uri: Uri) => {
     if(!revealIfAlreadyOpened(uri)) {
-      registerPanel(showPreview(uri, provider));
+      registerPanel(showPreview(context ,uri, provider));
     }
   });
 
@@ -58,7 +58,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(openedEvent, previewCmd);
 }
 
-function showPreview(uri: Uri, provider: PdfDocumentContentProvider): WebviewPanel {
+function showPreview(context: ExtensionContext, uri: Uri, provider: PdfDocumentContentProvider): WebviewPanel {
   const basename = path.basename(uri.fsPath);
   const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
   const panel = vscode.window.createWebviewPanel(
@@ -67,11 +67,29 @@ function showPreview(uri: Uri, provider: PdfDocumentContentProvider): WebviewPan
     column,
     {
       enableScripts: true,
-      retainContextWhenHidden: true
+      retainContextWhenHidden: true,
+      localResourceRoots: getLocalResourceRoots(context, uri)
     }
   );
   panel.webview.html = provider.provideTextDocumentContent(uri);
   return panel;
+}
+
+function getLocalResourceRoots(
+  context: ExtensionContext,
+  resource: vscode.Uri
+): vscode.Uri[] {
+  const baseRoots = [vscode.Uri.file(context.extensionPath)];
+  const folder = vscode.workspace.getWorkspaceFolder(resource);
+  if (folder) {
+    return baseRoots.concat(folder.uri);
+  }
+
+  if (!resource.scheme || resource.scheme === 'file') {
+    return baseRoots.concat(vscode.Uri.file(path.dirname(resource.fsPath)));
+  }
+
+  return baseRoots;
 }
 
 export function deactivate() {
