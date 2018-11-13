@@ -2,7 +2,7 @@
   "name": "pdf",
   "displayName": "vscode-pdf",
   "description": "Display pdf file in VSCode.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "publisher": "tomoki1207",
   "engines": {
     "vscode": "^1.23.0"
