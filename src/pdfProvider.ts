@@ -12,7 +12,7 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
       .with({ scheme: 'vscode-resource' });
   }
 
-  public provideTextDocumentContent(uri: vscode.Uri): string {
+  public provideTextDocumentContent(uri: vscode.Uri, state: any): string {
     const docPath = uri.with({ scheme: 'vscode-resource' });
     const head = [
       '<!DOCTYPE html>',
@@ -25,7 +25,14 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
 
     const body = [
       '<body>',
-      `<iframe id="pdf-viewer" src="${this.getUri('lib', 'web', 'viewer.html')}?file=${docPath}">`,
+      `<script>
+      (function () {
+        // store state for revive
+        const vscode = acquireVsCodeApi();
+        vscode.setState(JSON.parse('${JSON.stringify(state)}'));
+      }());
+      </script>`,
+      `<iframe id="pdf-viewer" src="${this.getUri('lib', 'web', 'viewer.html')}?file=${docPath}" />`,
       '</body>'
     ].join("\n");
 

@@ -5,7 +5,7 @@
   "version": "0.4.1",
   "publisher": "tomoki1207",
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.25.0"
   },
   "categories": [
     "Programming Languages"
@@ -24,7 +24,8 @@
   },
   "activationEvents": [
     "onLanguage:pdf",
-    "onCommand:extension.pdf-preview"
+    "onCommand:extension.pdf-preview",
+    "onWebviewPanel:pdf.preview"
   ],
   "main": "./out/src/extension",
   "contributes": {

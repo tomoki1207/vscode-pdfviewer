@@ -11,31 +11,37 @@ import { PdfDocumentContentProvider } from './pdfProvider';
 
 const path = require("path");
 
-export function activate(context: ExtensionContext) {
+const viewType = 'pdf.preview';
 
-  const openedPanels: WebviewPanel[] = [];
+interface PdfPreviewPanel {
+  panel: WebviewPanel,
+  resource: Uri,
+}
+
+export function activate(context: ExtensionContext) {
+  const openedPanels: PdfPreviewPanel[] = [];
   const provider = new PdfDocumentContentProvider(context);
 
   const revealIfAlreadyOpened = (uri: Uri): boolean => {
-    const opened = openedPanels.find(panel => panel.viewType === uri.fsPath);
+    const opened = openedPanels.find(panel => panel.resource.fsPath === uri.fsPath);
     if (!opened)
       return false;
-    opened.reveal(opened.viewColumn);
+    opened.panel.reveal(opened.panel.viewColumn);
     return true;
   }
 
-  const registerPanel = (panel: WebviewPanel): void => {
-    panel.onDidDispose(() => {
-      openedPanels.splice(openedPanels.indexOf(panel), 1);
+  const registerPanel = (preview: PdfPreviewPanel): void => {
+    preview.panel.onDidDispose(() => {
+      openedPanels.splice(openedPanels.indexOf(preview), 1);
     })
-    openedPanels.push(panel);
+    openedPanels.push(preview);
   }
 
   const previewAndCloseSrcDoc = async (document: TextDocument): Promise<void> => {
     if (document.languageId === "pdf") {
       vscode.commands.executeCommand("workbench.action.closeActiveEditor");
       if (!revealIfAlreadyOpened(document.uri)) {
-        registerPanel(showPreview(context, document.uri, provider));
+        registerPanel(createPreview(context, document.uri, provider));
       }
     }
   }
@@ -46,9 +52,21 @@ export function activate(context: ExtensionContext) {
 
   const previewCmd = vscode.commands.registerCommand("extension.pdf-preview", (uri: Uri) => {
     if(!revealIfAlreadyOpened(uri)) {
-      registerPanel(showPreview(context ,uri, provider));
+      registerPanel(createPreview(context ,uri, provider));
     }
   });
+
+  if (vscode.window.registerWebviewPanelSerializer) {
+    vscode.window.registerWebviewPanelSerializer(viewType, {
+      async deserializeWebviewPanel(panel: WebviewPanel, state: any) {
+        const resource = Uri.parse(state.resource.fsPath);
+        panel.title = panel.title || getPreviewTitle(resource);
+        panel.webview.options = getWebviewOptions(context, resource);
+        panel.webview.html = provider.provideTextDocumentContent(resource, state);
+        registerPanel({ panel, resource })
+      }
+    })
+  }
 
   // If pdf file is already opened when load workspace.
   if (vscode.window.activeTextEditor) {
@@ -58,21 +76,28 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(openedEvent, previewCmd);
 }
 
-function showPreview(context: ExtensionContext, uri: Uri, provider: PdfDocumentContentProvider): WebviewPanel {
-  const basename = path.basename(uri.fsPath);
+function createPreview(context: ExtensionContext, uri: Uri, provider: PdfDocumentContentProvider): PdfPreviewPanel {
   const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : 1;
   const panel = vscode.window.createWebviewPanel(
-    uri.fsPath, // treated as identity
-    basename,
+    viewType,
+    getPreviewTitle(uri),
     column,
-    {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-      localResourceRoots: getLocalResourceRoots(context, uri)
-    }
+    getWebviewOptions(context, uri)
   );
-  panel.webview.html = provider.provideTextDocumentContent(uri);
-  return panel;
+  panel.webview.html = provider.provideTextDocumentContent(uri, { resource: uri });
+  return { panel, resource: uri };
+}
+
+function getPreviewTitle(uri: Uri): string {
+  return path.basename(uri.fsPath);
+}
+
+function getWebviewOptions(context: ExtensionContext, uri: Uri) {
+  return {
+    enableScripts: true,
+    retainContextWhenHidden: true,
+    localResourceRoots: getLocalResourceRoots(context, uri)
+  }
 }
 
 function getLocalResourceRoots(
