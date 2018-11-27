@@ -1,8 +1,8 @@
 {
-  "name": "pdf",
-  "displayName": "vscode-pdf",
-  "description": "Display pdf file in VSCode.",
-  "version": "0.4.1",
+  "name": "pdfviewer",
+  "displayName": "vscode-pdfviewer",
+  "description": "Display pdf files in VSCode.",
+  "version": "0.4.3",
   "publisher": "tomoki1207",
   "engines": {
     "vscode": "^1.23.0"
@@ -71,7 +71,7 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "vscode": "^1.1.21"
+    "vscode": "^1.1.22"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.32",
