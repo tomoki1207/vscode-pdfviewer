@@ -2,7 +2,7 @@
   "name": "pdf",
   "displayName": "vscode-pdf",
   "description": "Display pdf file in VSCode.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "publisher": "tomoki1207",
   "engines": {
     "vscode": "^1.25.0"
@@ -72,12 +72,12 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "vscode": "^1.1.21"
+    "vscode": "^1.1.22"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.40",
-    "mocha": "^2.3.3",
+    "mocha": "^5.2.0",
     "tslint": "^3.15.1",
     "typescript": "^2.9.1",
     "typings": "^1.4.0",

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2 (2018/11/28)
+
+- Revive display state on load VSCode.
+- [Event-Stream Package Security Update](https://code.visualstudio.com/blogs/2018/11/26/event-stream)
+
 ## 0.4.0 (2018/11/9)
 
 - Migrate vscode internal api. Due to [Microsoft/vscode#62630](https://github.com/Microsoft/vscode/issues/62630)
