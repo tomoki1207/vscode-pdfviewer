@@ -39,7 +39,7 @@ export function activate(context: ExtensionContext) {
 
   const previewAndCloseSrcDoc = async (document: TextDocument): Promise<void> => {
     if (document.languageId === "pdf") {
-      vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+      await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
       if (!revealIfAlreadyOpened(document.uri)) {
         registerPanel(createPreview(context, document.uri, provider));
       }
