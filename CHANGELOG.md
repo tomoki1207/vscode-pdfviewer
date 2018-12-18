@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3 (2018/11/28)
+
+- Recovery for working even VSCode 1.30.0.
+
 ## 0.4.2 (2018/11/28)
 
 - Revive display state on load VSCode.
