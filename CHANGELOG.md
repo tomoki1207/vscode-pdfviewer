@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0 (2019/02/25)
+
+- Recovery for working even VSCode 1.31.x.
+- Avoid nested `<iframe>`.
+
 ## 0.4.3 (2018/11/28)
 
 - Recovery for working even VSCode 1.30.0.
