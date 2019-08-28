@@ -22,6 +22,7 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta name="google" content="notranslate">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src vscode-resource:; script-src 'unsafe-inline' vscode-resource:; style-src 'unsafe-inline' vscode-resource:; img-src vscode-resource:;">
         <title>PDF.js viewer</title>
         <link rel="resource" type="application/l10n" href="${this.getUri('lib', 'web', 'locale', 'locale.properties')}">
         <link rel="stylesheet" href="${this.getUri('lib', 'web', 'viewer.css')}">
