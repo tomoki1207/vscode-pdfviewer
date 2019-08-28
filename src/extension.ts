@@ -8,8 +8,7 @@ import {
   WebviewPanel,
 } from 'vscode';
 import { PdfDocumentContentProvider } from './pdfProvider';
-
-const path = require("path");
+import * as path from "path";
 
 const viewType = 'pdf.preview';
 
