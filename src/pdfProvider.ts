@@ -34,6 +34,9 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
           window.addEventListener('load', function() {
               PDFViewerApplication.open('${docPath}')
           });
+          window.addEventListener('message', function() {
+              PDFViewerApplication.open('${docPath}')
+          });
         </script>
       </head>`;
 
