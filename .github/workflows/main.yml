@@ -12,8 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Install TypeScript
-      run:  npm install -g typescript
+    - name: Install tools
+      run:  npm install -g typescript vsce
     - name: Install dependencies
       run: yarn
     - name : Bulid
