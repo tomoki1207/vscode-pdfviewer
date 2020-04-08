@@ -1,21 +1,13 @@
-html 
-{
- overflow: auto;
-}
- 
-html, body, div, iframe 
-{
- margin: 0px; 
- padding: 0px; 
- height: 100%; 
- border: none;
+html {
+    height: 100%;
 }
 
-iframe 
-{
- display: block; 
- width: 100%; 
- border: none; 
- overflow-y: auto; 
- overflow-x: hidden;
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.fullheight {
+    height: 100%;
+    background: #bbddff;
 }

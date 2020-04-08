@@ -14,20 +14,17 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
 
   public provideTextDocumentContent(uri: vscode.Uri, state: any): string {
     const docPath = uri.with({ scheme: 'vscode-resource' });
-
     const path = `${this.getUri('lib', 'web', 'viewer.html')}?file=${docPath}`
     const body =
       `
+    <!doctype html>
     <head>
-      <link rel=”stylesheet” href=”${this.getUri('src', 'iframe.css')}”>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body>
-      <iframe src="${path}" 
-      frameborder="0" 
-      marginheight="0" 
-      marginwidth="0" 
-      width="100%" 
-      height="100%" ></iframe >
+
+    <body style="margin:0px;padding:0px;overflow:hidden">
+        <iframe src="${path}" frameborder="0" style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%"></iframe>
     </body>
     `
 
