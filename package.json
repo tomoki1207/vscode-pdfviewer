@@ -71,9 +71,6 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "package": "vsce package"
   },
-  "dependencies": {
-    "vscode": "^1.1.36"
-  },
   "devDependencies": {
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.0",
@@ -81,6 +78,7 @@
     "tslint": "^6.1.1",
     "typescript": "^3.8.3",
     "typings": "^2.1.1",
-    "vsce": "^1.75.0"
+    "vsce": "^1.75.0",
+    "vscode": "^1.1.36"
   }
 }
