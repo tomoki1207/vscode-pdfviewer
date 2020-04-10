@@ -14,7 +14,7 @@ const viewType = 'pdf.preview';
 
 interface PdfPreviewPanel {
   panel: WebviewPanel,
-  resource: Uri,
+  resource: Uri
 }
 
 export function activate(context: ExtensionContext) {
@@ -30,8 +30,14 @@ export function activate(context: ExtensionContext) {
   }
 
   const registerPanel = (preview: PdfPreviewPanel): void => {
+    if (preview.resource.scheme === "file") {
+      var watcher = vscode.workspace.createFileSystemWatcher(preview.resource.fsPath)
+      watcher.onDidDelete(() => preview.panel.title += " [deleted from disk]")
+      watcher.onDidChange(() => preview.panel.webview.postMessage("reload"))
+    }
     preview.panel.onDidDispose(() => {
       openedPanels.splice(openedPanels.indexOf(preview), 1);
+      watcher?.dispose();
     })
     openedPanels.push(preview);
   }
@@ -50,8 +56,8 @@ export function activate(context: ExtensionContext) {
   });
 
   const previewCmd = vscode.commands.registerCommand("extension.pdf-preview", (uri: Uri) => {
-    if(!revealIfAlreadyOpened(uri)) {
-      registerPanel(createPreview(context ,uri, provider));
+    if (!revealIfAlreadyOpened(uri)) {
+      registerPanel(createPreview(context, uri, provider));
     }
   });
 

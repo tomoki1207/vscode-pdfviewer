@@ -30,5 +30,6 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
 
 
     return body;
+
   }
 }
