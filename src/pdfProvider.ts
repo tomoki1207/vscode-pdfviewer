@@ -1,19 +1,20 @@
-/* tslint:disable:quotemark */
-"use strict";
 import * as vscode from "vscode";
+import { Uri } from "vscode";
 import * as path from "path";
 
 export class PdfDocumentContentProvider implements vscode.TextDocumentContentProvider {
-
-  public constructor(private _context: vscode.ExtensionContext) { }
+  public constructor(private _context: vscode.ExtensionContext, private panel?: vscode.WebviewPanel) { }
 
   private getUri(...p: string[]): vscode.Uri {
-    return vscode.Uri.file(path.join(this._context.extensionPath, ...p))
-      .with({ scheme: 'vscode-resource' });
+    const uri = vscode.Uri.file(path.join(this._context.extensionPath, ...p));
+    return this.panel.webview.asWebviewUri(uri);
   }
-
+  public setPanel(panel: vscode.WebviewPanel): void {
+    this.panel = panel;
+  }
   public provideTextDocumentContent(uri: vscode.Uri, state: any): string {
-    const docPath = uri.with({ scheme: 'vscode-resource' });
+    const docPath = this.panel.webview.asWebviewUri(uri);
+    const cspSource = this.panel.webview.cspSource;
     const head =
       `<!DOCTYPE html>
       <html dir="ltr" mozdisallowselectionprint>
@@ -22,26 +23,26 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta name="google" content="notranslate">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src vscode-resource:; script-src 'unsafe-inline' vscode-resource:; style-src 'unsafe-inline' vscode-resource:; img-src vscode-resource:;">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src ${cspSource};">
         <title>PDF.js viewer</title>
-        <link rel="resource" type="application/l10n" href="${this.getUri('lib', 'web', 'locale', 'locale.properties')}">
-        <link rel="stylesheet" href="${this.getUri('lib', 'web', 'viewer.css')}">
-        <link rel="stylesheet" href="${this.getUri('lib', 'pdf.css')}">
-        <script src="${this.getUri('lib', 'build', 'pdf.js')}"></script>
-        <script src="${this.getUri('lib', 'build', 'pdf.worker.js')}"></script>
-        <script src="${this.getUri('lib', 'web', 'viewer.js')}"></script>
+        <link rel="resource" type="application/l10n" href="${this.getUri("lib", "web", "locale", "locale.properties")}">
+        <link rel="stylesheet" href="${this.getUri("lib", "web", "viewer.css")}">
+        <link rel="stylesheet" href="${this.getUri("lib", "pdf.css")}">
+        <script src="${this.getUri("lib", "build", "pdf.js")}"></script>
+        <script src="${this.getUri("lib", "build", "pdf.worker.js")}"></script>
+        <script src="${this.getUri("lib", "web", "viewer.js")}"></script>
         <script>
           window.addEventListener('load', function() {
-              PDFViewerApplication.open('${docPath}')
+            window.PDFViewerApplication.open('${docPath}')
           });
           window.addEventListener('message', function() {
-              PDFViewerApplication.open('${docPath}')
+            window.PDFViewerApplication.open('${docPath}')
           });
         </script>
       </head>`;
 
-    const body = 
-  `<body tabindex="1" class="loadingInProgress">
+    const body =
+      `<body tabindex="1" class="loadingInProgress">
     <script>
     (function () {
       // store state for revive
@@ -49,20 +50,20 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
       vscode.setState(JSON.parse('${JSON.stringify(state)}'));
     }());
     </script>
-    
+
     <div id="outerContainer">
 
       <div id="sidebarContainer">
         <div id="toolbarSidebar">
           <div class="splitToolbarButton toggled">
             <button id="viewThumbnail" class="toolbarButton toggled" title="Show Thumbnails" tabindex="2" data-l10n-id="thumbs">
-               <span data-l10n-id="thumbs_label">Thumbnails</span>
+              <span data-l10n-id="thumbs_label">Thumbnails</span>
             </button>
             <button id="viewOutline" class="toolbarButton" title="Show Document Outline (double-click to expand/collapse all items)" tabindex="3" data-l10n-id="document_outline">
-               <span data-l10n-id="document_outline_label">Document Outline</span>
+              <span data-l10n-id="document_outline_label">Document Outline</span>
             </button>
             <button id="viewAttachments" class="toolbarButton" title="Show Attachments" tabindex="4" data-l10n-id="attachments">
-               <span data-l10n-id="attachments_label">Attachments</span>
+              <span data-l10n-id="attachments_label">Attachments</span>
             </button>
           </div>
         </div>
@@ -247,7 +248,7 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
                   <div class="splitToolbarButtonSeparator"></div>
                   <button id="zoomIn" class="toolbarButton zoomIn" title="Zoom In" tabindex="22" data-l10n-id="zoom_in">
                     <span data-l10n-id="zoom_in_label">Zoom In</span>
-                   </button>
+                  </button>
                 </div>
                 <span id="scaleSelectContainer" class="dropdownToolbarButton">
                   <select id="scaleSelect" title="Zoom" tabindex="23" data-l10n-id="zoom">
@@ -400,7 +401,7 @@ export class PdfDocumentContentProvider implements vscode.TextDocumentContentPro
   </body>`;
 
     const tail = [
-      '</html>'
+      "</html>"
     ].join("\n");
 
     return head + body + tail;

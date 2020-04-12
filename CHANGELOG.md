@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 (2020/04/10)
+
+- Support auto reload (#52)
+- Migrate vscode-extension packages
+
+### Thank you
+- @GeorchW Implemented auto-refresh ( #11 )  #52
+
 ## 0.5.0 (2019/02/25)
 
 - Recovery for working even VSCode 1.31.x.
