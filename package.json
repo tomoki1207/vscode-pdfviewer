@@ -7,6 +7,7 @@
   "engines": {
     "vscode": "^1.44.0"
   },
+  "enableProposedApi": true,
   "categories": [
     "Programming Languages"
   ],
@@ -23,30 +24,20 @@
     "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
   },
   "activationEvents": [
-    "onLanguage:pdf",
-    "onCommand:extension.pdf-preview",
-    "onWebviewPanel:pdf.preview"
+    "onCustomEditor:pdf.preview",
+    "onCommand:extension.pdf-preview"
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "languages": [
+    "customEditors": [
       {
-        "id": "pdf",
-        "aliases": [
-          "Plain Text (PDF)",
-          "pdf"
-        ],
-        "extensions": [
-          ".pdf"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "pdf",
-        "scopeName": "text.plain, text.plain.pdf",
-        "path": "./syntaxes/pdf.tmLanguage"
+        "viewType": "pdf.preview",
+        "displayName": "Pdf Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.pdf"
+          }
+        ]
       }
     ],
     "commands": [
@@ -54,16 +45,7 @@
         "command": "extension.pdf-preview",
         "title": "View PDF"
       }
-    ],
-    "menus": {
-      "explorer/context": [
-        {
-          "when": "resourceLangId == pdf",
-          "command": "extension.pdf-preview",
-          "group": "navigation"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -84,6 +66,7 @@
     "typescript": "^3.7.3",
     "typings": "^1.4.0",
     "vsce": "^1.71.0",
+    "vscode-dts": "^0.3.1",
     "vscode-test": "^1.3.0"
   }
 }
