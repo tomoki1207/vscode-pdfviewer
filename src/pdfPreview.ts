@@ -1,97 +1,96 @@
 import * as path from 'path'
-import * as vscode from 'vscode';
-import { Disposable } from './disposable';
+import * as vscode from 'vscode'
+import { Disposable } from './disposable'
 
 const enum PreviewState {
-	Disposed,
-	Visible,
-	Active,
+  Disposed,
+  Visible,
+  Active,
 }
 
 export class PdfPreview extends Disposable {
-	private _previewState = PreviewState.Visible;
+  private _previewState = PreviewState.Visible
 
-	constructor(
-		private readonly extensionRoot: vscode.Uri,
-		private readonly resource: vscode.Uri,
-		private readonly webviewEditor: vscode.WebviewPanel
-	) {
-		super();
-		const resourceRoot = resource.with({
-			path: resource.path.replace(/\/[^\/]+?\.\w+$/, '/'),
-		});
+  constructor(
+    private readonly extensionRoot: vscode.Uri,
+    private readonly resource: vscode.Uri,
+    private readonly webviewEditor: vscode.WebviewPanel
+  ) {
+    super()
+    const resourceRoot = resource.with({
+      path: resource.path.replace(/\/[^\/]+?\.\w+$/, '/'),
+    })
 
-		webviewEditor.webview.options = {
-			enableScripts: true,
-			localResourceRoots: [
-				resourceRoot,
-				extensionRoot,
-			]
-		};
-
-		this._register(webviewEditor.webview.onDidReceiveMessage(message => {
-			switch (message.type) {
-				case 'reopen-as-text':
-					{
-						vscode.commands.executeCommand('vscode.openWith', resource, 'default', webviewEditor.viewColumn);
-						break;
-					}
-			}
-		}));
-
-		this._register(webviewEditor.onDidChangeViewState(() => {
-			this.update();
-		}));
-
-		this._register(webviewEditor.onDidDispose(() => {
-			this._previewState = PreviewState.Disposed;
-		}));
-
-		const watcher = this._register(vscode.workspace.createFileSystemWatcher(resource.fsPath));
-		this._register(watcher.onDidChange(e => {
-			if (e.toString() === this.resource.toString()) {
-				this.reload();
-			}
-    }));
-		this._register(watcher.onDidDelete(e => {
-			if (e.toString() === this.resource.toString()) {
-				this.webviewEditor.dispose();
-			}
-		}));
-
-    this.webviewEditor.webview.html = this.getWebviewContents();
-    this.update();
-    }
-    
-	private reload() {
-		if (this._previewState !== PreviewState.Disposed) {
-      this.webviewEditor.webview.postMessage({ type: 'reload' });
-		}
-	}
-
-	private update() {
-		if (this._previewState === PreviewState.Disposed) {
-			return;
-		}
-
-		if (this.webviewEditor.active) {
-            this._previewState = PreviewState.Active;
-            return;
-        }
-        this._previewState = PreviewState.Visible;
+    webviewEditor.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [
+        resourceRoot,
+        extensionRoot,
+      ]
     }
 
-    private getWebviewContents(): string {
-        const webview  = this.webviewEditor.webview
-        const docPath = webview.asWebviewUri(this.resource)
-        const cspSource = webview.cspSource
-        const resolveAsUri = (...p: string[]) => {
-        const uri = vscode.Uri.file(path.join(this.extensionRoot.path, ...p))
-            return webview.asWebviewUri(uri)
+    this._register(webviewEditor.webview.onDidReceiveMessage(message => {
+      switch (message.type) {
+        case 'reopen-as-text': {
+          vscode.commands.executeCommand('vscode.openWith', resource, 'default', webviewEditor.viewColumn)
+          break
         }
+      }
+    }))
 
-        const head =
-`<!DOCTYPE html>
+    this._register(webviewEditor.onDidChangeViewState(() => {
+      this.update()
+    }))
+
+    this._register(webviewEditor.onDidDispose(() => {
+      this._previewState = PreviewState.Disposed
+    }))
+
+    const watcher = this._register(vscode.workspace.createFileSystemWatcher(resource.fsPath))
+    this._register(watcher.onDidChange(e => {
+      if (e.toString() === this.resource.toString()) {
+        this.reload()
+      }
+    }))
+    this._register(watcher.onDidDelete(e => {
+      if (e.toString() === this.resource.toString()) {
+        this.webviewEditor.dispose()
+      }
+    }))
+
+    this.webviewEditor.webview.html = this.getWebviewContents()
+    this.update()
+  }
+
+  private reload() {
+    if (this._previewState !== PreviewState.Disposed) {
+      this.webviewEditor.webview.postMessage({ type: 'reload' })
+    }
+  }
+
+  private update() {
+    if (this._previewState === PreviewState.Disposed) {
+      return
+    }
+
+    if (this.webviewEditor.active) {
+      this._previewState = PreviewState.Active
+      return
+    }
+    this._previewState = PreviewState.Visible
+  }
+
+  private getWebviewContents(): string {
+    const webview = this.webviewEditor.webview
+    const docPath = webview.asWebviewUri(this.resource)
+    const cspSource = webview.cspSource
+    const resolveAsUri = (...p: string[]) => {
+      const uri = vscode.Uri.file(path.join(this.extensionRoot.path, ...p))
+      return webview.asWebviewUri(uri)
+    }
+
+    const head =
+      `<!DOCTYPE html>
 <html dir="ltr" mozdisallowselectionprint>
 <head>
 <meta charset="utf-8">
@@ -121,8 +120,8 @@ export class PdfPreview extends Disposable {
     </script>
 </head>`
 
-        const body =
-`<body tabindex="1" class="loadingInProgress">
+    const body =
+      `<body tabindex="1" class="loadingInProgress">
     <div id="outerContainer">
 
       <div id="sidebarContainer">
@@ -473,7 +472,7 @@ export class PdfPreview extends Disposable {
 </body>`
 
     const tail = [
-    '</html>'
+      '</html>'
     ].join('\n')
 
     return head + body + tail
