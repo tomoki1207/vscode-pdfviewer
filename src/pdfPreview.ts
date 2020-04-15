@@ -50,23 +50,22 @@ export class PdfPreview extends Disposable {
 		const watcher = this._register(vscode.workspace.createFileSystemWatcher(resource.fsPath));
 		this._register(watcher.onDidChange(e => {
 			if (e.toString() === this.resource.toString()) {
-				this.render();
+				this.reload();
 			}
-		}));
+    }));
 		this._register(watcher.onDidDelete(e => {
 			if (e.toString() === this.resource.toString()) {
 				this.webviewEditor.dispose();
 			}
 		}));
 
-		this.render();
-		this.update();
-		this.webviewEditor.webview.postMessage({ type: 'setActive', value: this.webviewEditor.active });
+    this.webviewEditor.webview.html = this.getWebviewContents();
+    this.update();
     }
     
-	private render() {
+	private reload() {
 		if (this._previewState !== PreviewState.Disposed) {
-			this.webviewEditor.webview.html = this.getWebviewContents();
+      this.webviewEditor.webview.postMessage({ type: 'reload' });
 		}
 	}
 
@@ -99,7 +98,7 @@ export class PdfPreview extends Disposable {
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="google" content="notranslate">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src ${cspSource};">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src blob: ${cspSource};">
 <title>PDF.js viewer</title>
 <link rel="resource" type="application/l10n" href="${resolveAsUri('lib', 'web', 'locale', 'locale.properties')}">
 <link rel="stylesheet" href="${resolveAsUri('lib', 'web', 'viewer.css')}">
@@ -114,6 +113,11 @@ export class PdfPreview extends Disposable {
     window.addEventListener('message', function() {
     window.PDFViewerApplication.open('${docPath}')
     });
+    window.onerror = function() {
+      const msg = document.createElement('body')
+      msg.innerText = 'An error occurred while loading the file. Please open it again.'
+      document.body = msg
+    }
     </script>
 </head>`
 
