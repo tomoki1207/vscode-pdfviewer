@@ -1,96 +1,105 @@
-import * as path from 'path'
-import * as vscode from 'vscode'
-import { Disposable } from './disposable'
+import * as path from 'path';
+import * as vscode from 'vscode';
+import { Disposable } from './disposable';
 
-const enum PreviewState {
-  Disposed,
-  Visible,
-  Active,
-}
+type PreviewState = 'Disposed' | 'Visible' | 'Active';
 
 export class PdfPreview extends Disposable {
-  private _previewState = PreviewState.Visible
+  private _previewState: PreviewState = 'Visible';
 
   constructor(
     private readonly extensionRoot: vscode.Uri,
     private readonly resource: vscode.Uri,
     private readonly webviewEditor: vscode.WebviewPanel
   ) {
-    super()
+    super();
     const resourceRoot = resource.with({
-      path: resource.path.replace(/\/[^\/]+?\.\w+$/, '/'),
-    })
+      path: resource.path.replace(/\/[^/]+?\.\w+$/, '/'),
+    });
 
     webviewEditor.webview.options = {
       enableScripts: true,
-      localResourceRoots: [
-        resourceRoot,
-        extensionRoot,
-      ]
-    }
+      localResourceRoots: [resourceRoot, extensionRoot],
+    };
 
-    this._register(webviewEditor.webview.onDidReceiveMessage(message => {
-      switch (message.type) {
-        case 'reopen-as-text': {
-          vscode.commands.executeCommand('vscode.openWith', resource, 'default', webviewEditor.viewColumn)
-          break
+    this._register(
+      webviewEditor.webview.onDidReceiveMessage((message) => {
+        switch (message.type) {
+          case 'reopen-as-text': {
+            vscode.commands.executeCommand(
+              'vscode.openWith',
+              resource,
+              'default',
+              webviewEditor.viewColumn
+            );
+            break;
+          }
         }
-      }
-    }))
+      })
+    );
 
-    this._register(webviewEditor.onDidChangeViewState(() => {
-      this.update()
-    }))
+    this._register(
+      webviewEditor.onDidChangeViewState(() => {
+        this.update();
+      })
+    );
 
-    this._register(webviewEditor.onDidDispose(() => {
-      this._previewState = PreviewState.Disposed
-    }))
+    this._register(
+      webviewEditor.onDidDispose(() => {
+        this._previewState = 'Disposed';
+      })
+    );
 
-    const watcher = this._register(vscode.workspace.createFileSystemWatcher(resource.fsPath))
-    this._register(watcher.onDidChange(e => {
-      if (e.toString() === this.resource.toString()) {
-        this.reload()
-      }
-    }))
-    this._register(watcher.onDidDelete(e => {
-      if (e.toString() === this.resource.toString()) {
-        this.webviewEditor.dispose()
-      }
-    }))
+    const watcher = this._register(
+      vscode.workspace.createFileSystemWatcher(resource.fsPath)
+    );
+    this._register(
+      watcher.onDidChange((e) => {
+        if (e.toString() === this.resource.toString()) {
+          this.reload();
+        }
+      })
+    );
+    this._register(
+      watcher.onDidDelete((e) => {
+        if (e.toString() === this.resource.toString()) {
+          this.webviewEditor.dispose();
+        }
+      })
+    );
 
-    this.webviewEditor.webview.html = this.getWebviewContents()
-    this.update()
+    this.webviewEditor.webview.html = this.getWebviewContents();
+    this.update();
   }
 
-  private reload() {
-    if (this._previewState !== PreviewState.Disposed) {
-      this.webviewEditor.webview.postMessage({ type: 'reload' })
+  private reload(): void {
+    if (this._previewState !== 'Disposed') {
+      this.webviewEditor.webview.postMessage({ type: 'reload' });
     }
   }
 
-  private update() {
-    if (this._previewState === PreviewState.Disposed) {
-      return
+  private update(): void {
+    if (this._previewState === 'Disposed') {
+      return;
     }
 
     if (this.webviewEditor.active) {
-      this._previewState = PreviewState.Active
-      return
+      this._previewState = 'Active';
+      return;
     }
-    this._previewState = PreviewState.Visible
+    this._previewState = 'Visible';
   }
 
   private getWebviewContents(): string {
-    const webview = this.webviewEditor.webview
-    const docPath = webview.asWebviewUri(this.resource)
-    const cspSource = webview.cspSource
-    const resolveAsUri = (...p: string[]) => {
-      const uri = vscode.Uri.file(path.join(this.extensionRoot.path, ...p))
-      return webview.asWebviewUri(uri)
-    }
+    const webview = this.webviewEditor.webview;
+    const docPath = webview.asWebviewUri(this.resource);
+    const cspSource = webview.cspSource;
+    const resolveAsUri = (...p: string[]): vscode.Uri => {
+      const uri = vscode.Uri.file(path.join(this.extensionRoot.path, ...p));
+      return webview.asWebviewUri(uri);
+    };
 
-    const head =
-      `<!DOCTYPE html>
+    const head = `<!DOCTYPE html>
 <html dir="ltr" mozdisallowselectionprint>
 <head>
 <meta charset="utf-8">
@@ -99,7 +108,12 @@ export class PdfPreview extends Disposable {
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src blob: ${cspSource};">
 <title>PDF.js viewer</title>
-<link rel="resource" type="application/l10n" href="${resolveAsUri('lib', 'web', 'locale', 'locale.properties')}">
+<link rel="resource" type="application/l10n" href="${resolveAsUri(
+      'lib',
+      'web',
+      'locale',
+      'locale.properties'
+    )}">
 <link rel="stylesheet" href="${resolveAsUri('lib', 'web', 'viewer.css')}">
 <link rel="stylesheet" href="${resolveAsUri('lib', 'pdf.css')}">
 <script src="${resolveAsUri('lib', 'build', 'pdf.js')}"></script>
@@ -118,10 +132,9 @@ export class PdfPreview extends Disposable {
       document.body = msg
     }
     </script>
-</head>`
+</head>`;
 
-    const body =
-      `<body tabindex="1" class="loadingInProgress">
+    const body = `<body tabindex="1" class="loadingInProgress">
     <div id="outerContainer">
 
       <div id="sidebarContainer">
@@ -469,12 +482,10 @@ export class PdfPreview extends Disposable {
 
     </div> <!-- outerContainer -->
     <div id="printContainer"></div>
-</body>`
+</body>`;
 
-    const tail = [
-      '</html>'
-    ].join('\n')
+    const tail = ['</html>'].join('\n');
 
-    return head + body + tail
+    return head + body + tail;
   }
 }

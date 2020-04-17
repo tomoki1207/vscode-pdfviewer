@@ -1,18 +1,22 @@
-import * as vscode from 'vscode'
-import { PdfCustomProvider } from './pdfProvider'
+import * as vscode from 'vscode';
+import { PdfCustomProvider } from './pdfProvider';
 
-export function activate(context: vscode.ExtensionContext) {
-  const extensionRoot = vscode.Uri.file(context.extensionPath)
+export function activate(context: vscode.ExtensionContext): void {
+  const extensionRoot = vscode.Uri.file(context.extensionPath);
   // Register our custom editor provider
-  const provider = new PdfCustomProvider(extensionRoot)
+  const provider = new PdfCustomProvider(extensionRoot);
   context.subscriptions.push(
-    vscode.window.registerCustomEditorProvider2(PdfCustomProvider.viewType, provider, {
-      webviewOptions: {
-        enableFindWidget: false, // default
-        retainContextWhenHidden: true
+    vscode.window.registerCustomEditorProvider2(
+      PdfCustomProvider.viewType,
+      provider,
+      {
+        webviewOptions: {
+          enableFindWidget: false, // default
+          retainContextWhenHidden: true,
+        },
       }
-    }))
+    )
+  );
 }
 
-export function deactivate() {
-}
+export function deactivate(): void {}
