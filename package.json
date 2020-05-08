@@ -5,7 +5,7 @@
   "version": "0.6.0",
   "publisher": "tomoki1207",
   "engines": {
-    "vscode": "^1.44.0"
+    "vscode": "^1.45.0"
   },
   "enableProposedApi": true,
   "categories": [
@@ -24,8 +24,7 @@
     "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
   },
   "activationEvents": [
-    "onCustomEditor:pdf.preview",
-    "onCommand:extension.pdf-preview"
+    "onCustomEditor:pdf.preview"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -39,20 +38,15 @@
           }
         ]
       }
-    ],
-    "commands": [
-      {
-        "command": "extension.pdf-preview",
-        "title": "View PDF"
-      }
     ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "watch": "tsc -w -p ./",
     "pretest": "npm run compile",
     "test": "node ./out/test/runTest.js",
+    "lint": "eslint -c .eslintrc.json --ext .ts ./src",
     "package": "vsce package"
   },
   "dependencies": {

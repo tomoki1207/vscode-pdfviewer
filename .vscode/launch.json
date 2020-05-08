@@ -1,6 +1,6 @@
 // A launch configuration that launches the extension inside a new window
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "configurations": [
     {
       "name": "Launch Extension",
@@ -12,8 +12,8 @@
       ],
       "stopOnEntry": false,
       "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/out/src"],
-      "preLaunchTask": "npm"
+      "outFiles": ["${workspaceRoot}/out/**/*.js"],
+      "preLaunchTask": "npm: watch"
     },
     {
       "name": "Launch Tests",
