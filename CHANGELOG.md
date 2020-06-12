@@ -4,6 +4,7 @@
 
 - [Change extension API](https://github.com/microsoft/vscode/issues/77131)
 - Resolve known issues about showing pdf preview.
+- Upgrade PDF.js to 2.4.456
 
 ## 0.6.0 (2020/04/10)
 
