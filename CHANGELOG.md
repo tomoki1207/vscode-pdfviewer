@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (2020/06/12)
+## 1.0.0 (2020/06/18)
 
 - [Change extension API](https://github.com/microsoft/vscode/issues/77131)
 - Resolve known issues about showing pdf preview.
