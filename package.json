@@ -27,17 +27,54 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "customEditors": [
-      {
-        "viewType": "pdf.preview",
-        "displayName": "Pdf Preview",
-        "selector": [
-          {
-            "filenamePattern": "*.pdf"
-          }
-        ]
+    "customEditors": [{
+      "viewType": "pdf.preview",
+      "displayName": "Pdf Preview",
+      "selector": [{
+        "filenamePattern": "*.pdf"
+      }]
+    }],
+    "configuration": {
+      "type": "object",
+      "title": "PDF Preview",
+      "properties": {
+        "pdf.preview.default.cursor": {
+          "markdownDescription": "The default cursol tool for preview.",
+          "type": "string",
+          "default": "select",
+          "enum": [
+            "select", "hand"
+          ]
+        },
+        "pdf.preview.default.zoom": {
+          "markdownDescription": "The default zoom level for preview. Allowed values are `auto`, `page-actual`, `page-fit`, `page-width`, and 1-based scale values. (`1.0` means 100%)",
+          "type": "string",
+          "default": "auto",
+          "pattern": "^(\\d+(?:\\.\\d+)?|auto|page-actual|page-fit|page-width)$"
+        },
+        "pdf.preview.default.sidebar": {
+          "markdownDescription": "The default visibility of sidebar for preview. If set to `true`, show sidebar when preview is loaded.",
+          "type": "boolean",
+          "default": false
+        },
+        "pdf.preview.default.scrollMode": {
+          "markdownDescription": "The default scroll mode for preview.",
+          "type": "string",
+          "default": "vertical",
+          "enum": [
+            "vertical", "horizontal", "wrapped"
+          ]
+        },
+        "pdf.preview.default.spreadMode": {
+          "markdownDescription": "The default spread mode for preview.",
+          "type": "string",
+          "default": "none",
+          "enum": [
+            "none", "odd", "even"
+          ]
+        }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -106,7 +106,7 @@ export class PdfPreview extends Disposable {
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="google" content="notranslate">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src blob: ${cspSource};">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src blob: data: ${cspSource};">
 <title>PDF.js viewer</title>
 <link rel="resource" type="application/l10n" href="${resolveAsUri(
       'lib',
@@ -121,10 +121,11 @@ export class PdfPreview extends Disposable {
 <script src="${resolveAsUri('lib', 'web', 'viewer.js')}"></script>
 <script>
     window.addEventListener('load', function() {
-    window.PDFViewerApplication.open('${docPath}')
+      window.PDFViewerApplication.open('${docPath}')
     });
+    }, { once: true });
     window.addEventListener('message', function() {
-    window.PDFViewerApplication.open('${docPath}')
+      window.PDFViewerApplication.open('${docPath}')
     });
     window.onerror = function() {
       const msg = document.createElement('body')
@@ -196,6 +197,7 @@ export class PdfPreview extends Disposable {
 
         <div id="secondaryToolbar" class="secondaryToolbar hidden doorHangerRight">
           <div id="secondaryToolbarButtonContainer">
+            <div style="display:none;">
             <button id="secondaryPresentationMode" class="secondaryToolbarButton presentationMode visibleLargeView" title="Switch to Presentation Mode" tabindex="51" data-l10n-id="presentation_mode">
               <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
             </button>
@@ -217,7 +219,7 @@ export class PdfPreview extends Disposable {
             </a>
 
             <div class="horizontalToolbarSeparator visibleLargeView"></div>
-
+            </div>
             <button id="firstPage" class="secondaryToolbarButton firstPage" title="Go to First Page" tabindex="56" data-l10n-id="first_page">
               <span data-l10n-id="first_page_label">Go to First Page</span>
             </button>
@@ -299,6 +301,7 @@ export class PdfPreview extends Disposable {
                 <span id="numPages" class="toolbarLabel"></span>
               </div>
               <div id="toolbarViewerRight">
+              <div style="display:none;">
                 <button id="presentationMode" class="toolbarButton presentationMode hiddenLargeView" title="Switch to Presentation Mode" tabindex="31" data-l10n-id="presentation_mode">
                   <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
                 </button>
@@ -319,7 +322,7 @@ export class PdfPreview extends Disposable {
                 </a>
 
                 <div class="verticalToolbarSeparator hiddenSmallView"></div>
-
+                </div>
                 <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools">
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
