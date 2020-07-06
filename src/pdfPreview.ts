@@ -2,6 +2,10 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Disposable } from './disposable';
 
+function escapeAttribute(value: string | vscode.Uri): string {
+  return value.toString().replace(/"/g, '&quot;');
+}
+
 type PreviewState = 'Disposed' | 'Visible' | 'Active';
 
 export class PdfPreview extends Disposable {
@@ -99,6 +103,18 @@ export class PdfPreview extends Disposable {
       return webview.asWebviewUri(uri);
     };
 
+    const config = vscode.workspace.getConfiguration('pdf-preview');
+    const settings = {
+      path: docPath.toString(),
+      defaults: {
+        cursor: config.get('default.cursor') as string,
+        scale: config.get('default.scale') as string,
+        sidebar: config.get('default.sidebar') as boolean,
+        scrollMode: config.get('default.scrollMode') as string,
+        spreadMode: config.get('default.spreadMode') as string,
+      },
+    };
+
     const head = `<!DOCTYPE html>
 <html dir="ltr" mozdisallowselectionprint>
 <head>
@@ -107,6 +123,9 @@ export class PdfPreview extends Disposable {
 <meta name="google" content="notranslate">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${cspSource}; script-src 'unsafe-inline' ${cspSource}; style-src 'unsafe-inline' ${cspSource}; img-src blob: data: ${cspSource};">
+<meta id="pdf-preview-config" data-config="${escapeAttribute(
+      JSON.stringify(settings)
+    )}">
 <title>PDF.js viewer</title>
 <link rel="resource" type="application/l10n" href="${resolveAsUri(
       'lib',
@@ -119,20 +138,7 @@ export class PdfPreview extends Disposable {
 <script src="${resolveAsUri('lib', 'build', 'pdf.js')}"></script>
 <script src="${resolveAsUri('lib', 'build', 'pdf.worker.js')}"></script>
 <script src="${resolveAsUri('lib', 'web', 'viewer.js')}"></script>
-<script>
-    window.addEventListener('load', function() {
-      window.PDFViewerApplication.open('${docPath}')
-    });
-    }, { once: true });
-    window.addEventListener('message', function() {
-      window.PDFViewerApplication.open('${docPath}')
-    });
-    window.onerror = function() {
-      const msg = document.createElement('body')
-      msg.innerText = 'An error occurred while loading the file. Please open it again.'
-      document.body = msg
-    }
-    </script>
+<script src="${resolveAsUri('lib', 'main.js')}"></script>
 </head>`;
 
     const body = `<body tabindex="1" class="loadingInProgress">
