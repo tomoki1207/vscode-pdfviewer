@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0 (2020/07/13)
+
+- The issue about extension view is resolved.
+  + Remove message shown on loaded. 
+- Support default viewer settings
+  + cursor (**hand** or tool)
+  + scale (**auto**, page-actual, etc...)
+  + sidebar (**hide** or show)
+  + scrollMode (**vertical**, horizontal or wrapped)
+  + spreadMode (**none**, odd or even)
+
 ## 1.0.0 (2020/06/18)
 
 - [Change extension API](https://github.com/microsoft/vscode/issues/77131)
