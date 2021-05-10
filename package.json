@@ -29,7 +29,7 @@
   "contributes": {
     "capabilities": {
       "untrustedWorkspaces": {
-        "supported": false
+        "supported": true
       }
     },
     "customEditors": [{
