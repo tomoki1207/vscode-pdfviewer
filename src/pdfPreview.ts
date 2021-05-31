@@ -303,11 +303,11 @@ export class PdfPreview extends Disposable {
           <div id="toolbarContainer">
             <div id="toolbarViewer">
               <div id="toolbarViewerLeft">
-                <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11" data-l10n-id="toggle_sidebar">
+                <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11" data-l10n-id="toggle_sidebar" aria-expanded="false" aria-controls="sidebarContainer">
                   <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
                 </button>
                 <div class="toolbarButtonSpacer"></div>
-                <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="12" data-l10n-id="findbar">
+                <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="12" data-l10n-id="findbar" aria-expanded="false" aria-controls="findbar">
                   <span data-l10n-id="findbar_label">Find</span>
                 </button>
                 <div class="splitToolbarButton hiddenSmallView">
@@ -344,7 +344,7 @@ export class PdfPreview extends Disposable {
 
                 <div class="verticalToolbarSeparator hiddenSmallView"></div>
 
-                <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools">
+                <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools" aria-expanded="false" aria-controls="secondaryToolbar">
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
               </div>
@@ -385,17 +385,6 @@ export class PdfPreview extends Disposable {
             </div>
           </div>
         </div>
-
-        <menu type="context" id="viewerContextMenu">
-          <menuitem id="contextFirstPage" label="First Page"
-                    data-l10n-id="first_page"></menuitem>
-          <menuitem id="contextLastPage" label="Last Page"
-                    data-l10n-id="last_page"></menuitem>
-          <menuitem id="contextPageRotateCw" label="Rotate Clockwise"
-                    data-l10n-id="page_rotate_cw"></menuitem>
-          <menuitem id="contextPageRotateCcw" label="Rotate Counter-Clockwise"
-                    data-l10n-id="page_rotate_ccw"></menuitem>
-        </menu>
 
         <div id="viewerContainer" tabindex="0">
           <div id="viewer" class="pdfViewer"></div>
