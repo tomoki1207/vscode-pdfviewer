@@ -70,7 +70,7 @@ export class PdfPreview extends Disposable {
       }
     }));
     this._register(watcher.onDidDelete((e) => {
-      const disposeDelay = vscode.window.getConfiguration('pdf-preview').get('default.disposeDelay');
+      const disposeDelay = vscode.workspace.getConfiguration('pdf-preview').get('default.disposeDelay');
       if (disposeDelay === '') return;
       disposeTimeout = setTimeout(() => {
         if (e.toString() === this.resource.toString()) {
