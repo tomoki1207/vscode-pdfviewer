@@ -34,11 +34,6 @@
         "filenamePattern": "*.pdf"
       }]
     }],
-    "capabilities": {
-      "untrustedWorkspaces": {
-        "supported": true
-      }
-    },
     "configuration": {
       "type": "object",
       "title": "PDF Preview",
