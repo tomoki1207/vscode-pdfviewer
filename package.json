@@ -72,7 +72,13 @@
           "enum": [
             "none", "odd", "even"
           ]
-        }
+        },
+				"pdf-preview.default.disposeDelay": {
+					"markdownDescription": "The default delay (in ms) before the preview is closed after file deletion. Unset this to prevent closing.",
+					"type": "string",
+					"default": "0",
+					"pattern": "^\\d*$"
+				}
       }
     }
   },
