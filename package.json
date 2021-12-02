@@ -27,6 +27,11 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
+    "capabilities": {
+      "untrustedWorkspaces": {
+        "supported": true
+      }
+    },
     "customEditors": [
       {
         "viewType": "pdf.preview",
