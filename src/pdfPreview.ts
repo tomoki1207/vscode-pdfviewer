@@ -221,6 +221,7 @@ export class PdfPreview extends Disposable {
 
         <div id="secondaryToolbar" class="secondaryToolbar hidden doorHangerRight">
           <div id="secondaryToolbarButtonContainer">
+          <div style="display:none;">
             <button id="secondaryPresentationMode" class="secondaryToolbarButton presentationMode visibleLargeView" title="Switch to Presentation Mode" tabindex="51" data-l10n-id="presentation_mode">
               <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
             </button>
@@ -242,7 +243,7 @@ export class PdfPreview extends Disposable {
             </a>
 
             <div class="horizontalToolbarSeparator visibleLargeView"></div>
-
+          </div>
             <button id="firstPage" class="secondaryToolbarButton firstPage" title="Go to First Page" tabindex="56" data-l10n-id="first_page">
               <span data-l10n-id="first_page_label">Go to First Page</span>
             </button>
@@ -324,6 +325,7 @@ export class PdfPreview extends Disposable {
                 <span id="numPages" class="toolbarLabel"></span>
               </div>
               <div id="toolbarViewerRight">
+              <div style="display:none;">
                 <button id="presentationMode" class="toolbarButton presentationMode hiddenLargeView" title="Switch to Presentation Mode" tabindex="31" data-l10n-id="presentation_mode">
                   <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
                 </button>
@@ -344,7 +346,7 @@ export class PdfPreview extends Disposable {
                 </a>
 
                 <div class="verticalToolbarSeparator hiddenSmallView"></div>
-
+              </div>
                 <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools" aria-expanded="false" aria-controls="secondaryToolbar">
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
