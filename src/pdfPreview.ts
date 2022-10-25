@@ -107,6 +107,7 @@ export class PdfPreview extends Disposable {
     const settings = {
       cMapUrl: resolveAsUri('lib', 'web', 'cmaps/').toString(),
       path: docPath.toString(),
+      fragment: docPath.fragment,
       defaults: {
         cursor: config.get('default.cursor') as string,
         scale: config.get('default.scale') as string,
@@ -320,7 +321,7 @@ export class PdfPreview extends Disposable {
                     <span data-l10n-id="next_label">Next</span>
                   </button>
                 </div>
-                <input type="number" id="pageNumber" class="toolbarField pageNumber" title="Page" value="1" size="4" min="1" tabindex="15" data-l10n-id="page" autocomplete="off">
+                <input type="number" id="pageNumber" class="toolbarField pageNumber" title="Page" value="100" size="4" min="1" tabindex="15" data-l10n-id="page" autocomplete="off">
                 <span id="numPages" class="toolbarLabel"></span>
               </div>
               <div id="toolbarViewerRight">
