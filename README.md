@@ -8,7 +8,7 @@ Display pdf in VSCode.
 
 ### Upgrade PDF.js
 
-1. Download latest [Prebuilt](https://mozilla.github.io/pdf.js/getting_started/#download).
+1. Download latest [Prebuilt(older browsers)](https://mozilla.github.io/pdf.js/getting_started/#download).
 1. Extract the ZIP file.
 1. Overwrite ./lib/* by extracted directories.
    - If lib/web/viewer.html has changes, apply these changes to HTML template at pdfPreview.ts.
