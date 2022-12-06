@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.0 (2021/12/15)
+
+- Allow pdf viewer to work in an untrusted workspace ( #102 )
+- Bump version of PDF.js to Stable (v2.10.377) ( #120 )
+
+### Bug fixes
+- Support Unicode in PDF by passing the right cMapUrl to pdf.js (#116)
+- Preserve the current page number and zoom level on reload (#121)
+
+### Thank you
+- @lramos15 Added settings about untrusted workspaces. #102
+- @aifreedom Fixed bug about Unicode charactors. #116
+- @simon446 Bump pdf.js version. #120
+- @zamzterz Fixed to preserve page number and scale on reload. #121
+
 ## 1.1.0 (2020/07/13)
 
 - The issue about extension view is resolved.
