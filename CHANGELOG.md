@@ -1,11 +1,23 @@
 # Changelog
 
+## 1.2.1 (2022/12/12)
+
+- Update PDF.js to 3.1.81-legacy
+- Restore scroll position during reload (#136)
+- Run under remote development (#100)
+
+### Thank you
+
+- @kfigiela Run extension locally when using remote development #100
+- @Daniel-Atanasov fix: Fix scroll location and flickering during reload #136
+
 ## 1.2.0 (2021/12/15)
 
-- Allow pdf viewer to work in an untrusted workspace ( #102 )
-- Bump version of PDF.js to Stable (v2.10.377) ( #120 )
+- Allow pdf viewer to work in an untrusted workspace (#102)
+- Bump version of PDF.js to Stable (v2.10.377) (#120)
 
 ### Bug fixes
+
 - Support Unicode in PDF by passing the right cMapUrl to pdf.js (#116)
 - Preserve the current page number and zoom level on reload (#121)
 
