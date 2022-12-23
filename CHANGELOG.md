@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2 (2022/12/23)
+
+- Fix about rendering Unicode characters
+
 ## 1.2.1 (2022/12/12)
 
 - Update PDF.js to 3.1.81-legacy
