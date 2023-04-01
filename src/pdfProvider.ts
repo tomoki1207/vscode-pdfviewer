@@ -7,7 +7,10 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
   private readonly _previews = new Set<PdfPreview>();
   private _activePreview: PdfPreview | undefined;
 
-  constructor(private readonly extensionRoot: vscode.Uri) {}
+  constructor(
+    private readonly extensionRoot: vscode.Uri, 
+    private callbacks: {(content:string)}[]
+  ) {}
 
   public openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
     return { uri, dispose: (): void => {} };
@@ -20,7 +23,8 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
     const preview = new PdfPreview(
       this.extensionRoot,
       document.uri,
-      webviewEditor
+      webviewEditor,
+      this.callbacks
     );
     this._previews.add(preview);
     this.setActivePreview(preview);

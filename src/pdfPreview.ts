@@ -1,5 +1,7 @@
+import { HookCallbacks } from 'async_hooks';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { MessageChannel } from 'worker_threads';
 import { Disposable } from './disposable';
 
 function escapeAttribute(value: string | vscode.Uri): string {
@@ -14,7 +16,8 @@ export class PdfPreview extends Disposable {
   constructor(
     private readonly extensionRoot: vscode.Uri,
     private readonly resource: vscode.Uri,
-    private readonly webviewEditor: vscode.WebviewPanel
+    private readonly webviewEditor: vscode.WebviewPanel,
+    private callbacks: {(content:string)}[]
   ) {
     super();
     const resourceRoot = resource.with({
@@ -36,6 +39,12 @@ export class PdfPreview extends Disposable {
               'default',
               webviewEditor.viewColumn
             );
+            break;
+          }
+          case 'clicked': {
+            for (const callback of this.callbacks) {
+              callback(message.text)
+            }
             break;
           }
         }
