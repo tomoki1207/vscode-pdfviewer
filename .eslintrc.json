@@ -9,14 +9,23 @@
   "plugins": [
     "@typescript-eslint"
   ],
-  "env": { "node": true, "es6": true },
+  "env": {
+    "node": true,
+    "es6": true
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
   "rules": {
-    "prettier/prettier": ["error", { "singleQuote": true }],
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "endOfLine": "auto"
+      }
+    ],
     "no-empty-function": "off",
     "@typescript-eslint/no-empty-function": "off"
   }
