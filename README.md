@@ -1,29 +1,31 @@
-# pdf
+# **PDF**
 
-Display pdf in VSCode.
+Displays PDF files in Visual Studio Code:
 
-![screenshot](https://user-images.githubusercontent.com/3643499/84454816-98fcd600-ac96-11ea-822c-3ae1e1599a13.gif)
+![Screenshot](https://user-images.githubusercontent.com/3643499/84454816-98fcd600-ac96-11ea-822c-3ae1e1599a13.gif)
 
-## Contribute
+## **Contribute**
 
-### Upgrade PDF.js
+### **Upgrade PDF.js**
 
-1. Download latest [Prebuilt(older browsers)](https://mozilla.github.io/pdf.js/getting_started/#download).
-1. Extract the ZIP file.
-1. Overwrite ./lib/* by extracted directories.
-   - If lib/web/viewer.html has changes, apply these changes to HTML template at pdfPreview.ts.
-1. To not use sample pdf.
-  - Remove sample pdf called `compressed.tracemonkey-pldi-09.pdf`.
-  - Remove code about using sample pdf from lib/web/viewer.js.
-    ```js
-    defaultUrl: {
-      value: "", // "compressed.tracemonkey-pldi-09.pdf"
-      kind: OptionKind.VIEWER
-    },
-    ```
+1.  Download the latest [prebuilt (for older browsers)](https://mozilla.github.io/pdf.js/getting_started/#download).
+1.  Extract the ZIP file.
+1.  Overwrite ./lib/* by extracted directories.
+    1.  If `lib/web/viewer.html` has changed, apply these changes to the HTML template at pdfPreview.ts.
+1.  To not use the sample PDF:
+    1.  Remove the sample PDF called `compressed.tracemonkey-pldi-09.pdf`.
+    1.  Remove code about using sample PDF from lib/web/viewer.js:
+        ```JS
+        defaultUrl: {
+          value: "", // "compressed.tracemonkey-pldi-09.pdf"
+          kind: OptionKind.VIEWER
+        },
+        ```
 
-## Change log
-See [CHANGELOG.md](CHANGELOG.md).
+## **Changelog**
 
-## License
-Please see [LICENSE](./LICENSE)
+See the [`CHANGELOG.md`](./CHANGELOG.md).
+
+## **License**
+
+See the [`LICENSE`](./LICENSE)
