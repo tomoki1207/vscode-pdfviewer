@@ -1,17 +1,44 @@
 import * as vscode from 'vscode';
 import { PdfPreview } from './pdfPreview';
 
-export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
-  public static readonly viewType = 'pdf.preview';
+// Clase "dummy" necesaria para que la interfaz de VS Code funcione
+class PdfDocument implements vscode.CustomDocument {
+    constructor(public readonly uri: vscode.Uri) {}
+    dispose(): void {}
+}
+
+export class PdfCustomProvider implements vscode.CustomEditorProvider<vscode.CustomDocument> {
+  // Propiedad estática para saber cuál es el visor activo
+  public static activePreview?: PdfPreview;
 
   private readonly _previews = new Set<PdfPreview>();
-  private _activePreview: PdfPreview | undefined;
 
   constructor(private readonly extensionRoot: vscode.Uri) {}
 
-  public openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
-    return { uri, dispose: (): void => {} };
+  // --- MÉTODOS OBLIGATORIOS QUE FALTABAN ---
+  private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<vscode.CustomDocumentEditEvent<vscode.CustomDocument>>();
+  public readonly onDidChangeCustomDocument = this._onDidChangeCustomDocument.event;
+
+  saveCustomDocument(document: vscode.CustomDocument, cancellation: vscode.CancellationToken): Thenable<void> {
+    return Promise.resolve();
   }
+
+  saveCustomDocumentAs(document: vscode.CustomDocument, destination: vscode.Uri, cancellation: vscode.CancellationToken): Thenable<void> {
+    return Promise.resolve();
+  }
+
+  revertCustomDocument(document: vscode.CustomDocument, cancellation: vscode.CancellationToken): Thenable<void> {
+    return Promise.resolve();
+  }
+
+  backupCustomDocument(document: vscode.CustomDocument, context: vscode.CustomDocumentBackupContext, cancellation: vscode.CancellationToken): Thenable<vscode.CustomDocumentBackup> {
+    throw new Error('Method not implemented.');
+  }
+
+  public async openCustomDocument(uri: vscode.Uri): Promise<vscode.CustomDocument> {
+    return new PdfDocument(uri);
+  }
+  // --- FIN DE LOS MÉTODOS OBLIGATORIOS ---
 
   public async resolveCustomEditor(
     document: vscode.CustomDocument,
@@ -33,17 +60,13 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
     webviewEditor.onDidChangeViewState(() => {
       if (webviewEditor.active) {
         this.setActivePreview(preview);
-      } else if (this._activePreview === preview && !webviewEditor.active) {
+      } else if (PdfCustomProvider.activePreview === preview && !webviewEditor.active) {
         this.setActivePreview(undefined);
       }
     });
   }
 
-  public get activePreview(): PdfPreview {
-    return this._activePreview;
-  }
-
   private setActivePreview(value: PdfPreview | undefined): void {
-    this._activePreview = value;
+    PdfCustomProvider.activePreview = value;
   }
 }

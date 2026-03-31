@@ -1,13 +1,29 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "files.exclude": {
-        "out": false // set this to true to hide the "out" folder with the compiled JS files
+        "out": false
     },
     "search.exclude": {
-        "out": true // set this to false to include "out" folder in search results
+        "out": true
     },
-    "typescript.tsdk": "./node_modules/typescript/lib", // we want to use the TS server from our node_modules folder to control its version
+    "typescript.tsdk": "./node_modules/typescript/lib",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
-    }
+        "source.fixAll.eslint": "explicit"
+    },
+    
+    // Configuración para PDF Viewer
+    "workbench.editorAssociations": {
+        "*.pdf": "pdf.preview"
+    },
+    "pdf-preview.default.autoOpen": true,
+    "pdf-preview.default.enabled": true,
+    "pdf-preview.scrollMode": 0,
+    "pdf-preview.spreadMode": 0,
+    "pdf-preview.default.backgroundColor": "#ffffff",
+    "pdf-preview.default.zoomLevel": "auto",
+    
+    // Configuraciones adicionales recomendadas
+    "editor.fontSize": 14,
+    "window.zoomLevel": 0,
+    "workbench.colorTheme": "Dark Modern"
 }

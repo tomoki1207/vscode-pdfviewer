@@ -13,7 +13,7 @@ export class PdfPreview extends Disposable {
 
   constructor(
     private readonly extensionRoot: vscode.Uri,
-    private readonly resource: vscode.Uri,
+    public readonly resource: vscode.Uri, // <-- CAMBIADO A 'public'
     private readonly webviewEditor: vscode.WebviewPanel
   ) {
     super();
@@ -76,7 +76,7 @@ export class PdfPreview extends Disposable {
     this.update();
   }
 
-  private reload(): void {
+  public reload(): void {
     if (this._previewState !== 'Disposed') {
       this.webviewEditor.webview.postMessage({ type: 'reload' });
     }
@@ -95,6 +95,7 @@ export class PdfPreview extends Disposable {
   }
 
   private getWebviewContents(): string {
+    // ... (El método getWebviewContents se queda exactamente como lo tenías)
     const webview = this.webviewEditor.webview;
     const docPath = webview.asWebviewUri(this.resource);
     const cspSource = webview.cspSource;

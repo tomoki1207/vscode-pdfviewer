@@ -3020,3 +3020,15 @@ dialog :link {
     display: none;
   }
 }
+#viewerContainer::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #1e1e1e; /* Color de fondo oscuro */
+  z-index: 1;
+  mix-blend-mode: difference;
+  pointer-events: none; /* Permite que los eventos del mouse pasen a través */
+}

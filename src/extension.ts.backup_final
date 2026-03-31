@@ -1,0 +1,101 @@
+import * as vscode from 'vscode';
+import { PdfCustomProvider } from './pdfProvider';
+import { deletePdfPage } from './pdfEdit';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export function activate(context: vscode.ExtensionContext): void {
+  const extensionRoot = vscode.Uri.file(context.extensionPath);
+  // Register our custom editor provider
+  const provider = new PdfCustomProvider(extensionRoot);
+  context.subscriptions.push(
+    vscode.window.registerCustomEditorProvider(
+      'pdf.preview',
+      provider,
+        { webviewOptions: { retainContextWhenHidden: true } }
+    )
+  );
+
+  // Comando para borrar página
+  context.subscriptions.push(
+            vscode.commands.registerCommand('pdfviewer.deletePage', async (pageFromWebview?: number, filePath?: string) => {
+        console.log('=== DEBUG: Iniciando comando deletePage ===');
+        
+        // Log todos los editores visibles
+        console.log('Visible Text Editors:', vscode.window.visibleTextEditors.length);
+        vscode.window.visibleTextEditors.forEach((editor, index) => {
+            console.log(`Editor ${index}:`, editor.document.fileName, editor.document.uri.toString());
+        });
+        
+        // Verificar si hay custom editors
+        console.log('Active Custom Editor:', (vscode.window as any).activeCustomEditor);
+        
+        // Estrategia alternativa: buscar archivos PDF abiertos
+        const allDocuments = vscode.workspace.textDocuments;
+        const pdfDocuments = allDocuments.filter(doc => doc.fileName.toLowerCase().endsWith('.pdf'));
+        console.log('PDF Documents:', pdfDocuments.length);
+        pdfDocuments.forEach((doc, index) => {
+            console.log(`PDF ${index}:`, doc.fileName);
+        });
+        
+        if (pdfDocuments.length === 0) {
+            vscode.window.showErrorMessage('No hay un PDF activo. Abre un archivo PDF primero.');
+            return;
+        }
+        console.log('?? Comando deletePage ejecutado');
+        
+        // Buscar entre todos los editores visibles
+        const pdfEditors = vscode.window.visibleTextEditors.filter(editor => 
+            editor.document.fileName.toLowerCase().endsWith('.pdf')
+        );
+        
+        if (pdfEditors.length === 0) {
+            vscode.window.showErrorMessage('No hay un PDF activo. Abre un archivo PDF primero.');
+            return;
+        }
+
+        const activeEditor = pdfEditors[0]; // Tomar el primer PDF encontrado
+        console.log('PDF encontrado:', activeEditor.document.uri.toString());
+      if (
+        !activeEditor ||
+        !activeEditor.document.fileName.toLowerCase().endsWith('.pdf')
+      ) {
+        vscode.window.showErrorMessage('No hay un PDF activo.');
+        return;
+      }
+  
+      let pageNum = pageFromWebview || undefined;
+      if (!pageNum) {
+        const pageStr = await vscode.window.showInputBox({
+          prompt: '¿Qué página deseas borrar? (número, empezando desde 1)',
+        });
+        if (!pageStr) return;
+        pageNum = parseInt(pageStr, 10);
+        if (isNaN(pageNum)) {
+          vscode.window.showErrorMessage('Número inválido.');
+          return;
+        }
+      }
+  
+      const originalPath = filePath || activeEditor.document.fileName;
+      const tempPath = path.join(
+        path.dirname(originalPath),
+        `.__tmp__${path.basename(originalPath)}`
+      );
+  
+      try {
+        await deletePdfPage(originalPath, pageNum, tempPath);
+        // Reemplaza el archivo original
+        fs.copyFileSync(tempPath, originalPath);
+        fs.unlinkSync(tempPath);
+        vscode.window.showInformationMessage(`Página ${pageNum} borrada correctamente.`);
+        // Recarga el documento
+        await activeEditor.document.save();
+        await vscode.commands.executeCommand('workbench.action.files.revert');
+      } catch (e) {
+        vscode.window.showErrorMessage('Error: ' + e.message);
+      }
+    })
+  );
+}
+export function deactivate(): void {}

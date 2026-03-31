@@ -1,21 +1,20 @@
 import * as path from 'path';
-import * as Mocha from 'mocha';
-import * as glob from 'glob';
+import Mocha from 'mocha';
+import { glob } from 'glob';
 
 export function run(): Promise<void> {
   // Create the mocha test
   const mocha = new Mocha({
     ui: 'tdd',
+    color: true  // Añadido para reemplazar useColors
   });
-  // mocha.useColors(true);
 
   const testsRoot = path.resolve(__dirname, '..');
 
-  return new Promise((c, e) => {
-    glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
-      if (err) {
-        return e(err);
-      }
+  return new Promise(async (c, e) => {  // Añadido async aquí
+    try {
+      // Usar await con glob - esta es la forma correcta
+      const files = await glob('**/**.test.js', { cwd: testsRoot });
 
       // Add files to the test suite
       files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
@@ -33,6 +32,8 @@ export function run(): Promise<void> {
         console.error(err);
         e(err);
       }
-    });
+    } catch (err) {
+      e(err);
+    }
   });
 }

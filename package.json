@@ -1,11 +1,11 @@
 {
-  "name": "pdf",
-  "displayName": "vscode-pdf",
-  "description": "Display pdf file in VSCode.",
-  "version": "1.2.2",
-  "publisher": "tomoki1207",
+  "name": "santt997-pdf-plus-my-viewer",
+  "displayName": "PDF Viewer Plus - Enhanced Fork",
+  "description": "Enhanced PDF viewer for VSCode with page deletion, advanced navigation, and additional features. Fork of vscode-pdfviewer with extended functionality.",
+  "version": "1.3.0",
+  "publisher": "Santt997",
   "engines": {
-    "vscode": "^1.46.0"
+    "vscode": "^1.103.0"
   },
   "categories": [
     "Programming Languages"
@@ -17,15 +17,12 @@
   "icon": "vscode-pdf.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer.git"
+    "url": "https://github.com/Santt997/vscode-pdfviewer-plus"
   },
   "bugs": {
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
+    "url": "https://github.com/Santt997/vscode-pdfviewer-plus/issues"
   },
-  "activationEvents": [
-    "onCustomEditor:pdf.preview"
-  ],
-  "main": "./out/src/extension",
+  "main": "./out/extension",
   "contributes": {
     "capabilities": {
       "untrustedWorkspaces": {
@@ -34,13 +31,19 @@
     },
     "customEditors": [
       {
-        "viewType": "pdf.preview",
+        "viewType": "santt997.pdfPlusViewer",
         "displayName": "Pdf Preview",
         "selector": [
           {
             "filenamePattern": "*.pdf"
           }
         ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "pdfviewer.deletePage",
+        "title": "Delete PDF Page"
       }
     ],
     "configuration": {
@@ -60,7 +63,7 @@
           "markdownDescription": "The default zoom level for preview. Allowed values are `auto`, `page-actual`, `page-fit`, `page-width`, and 1-based scale values. (`1.0` means 100%)",
           "type": "string",
           "default": "auto",
-          "pattern": "^(\\d+(?:\\.\\d+)?|auto|page-actual|page-fit|page-width)$"
+          "pattern": "(\\d+(?:\\.\\d+)?|auto|page-actual|page-fit|page-width)$"
         },
         "pdf-preview.default.sidebar": {
           "markdownDescription": "Show the sidebar on load. The default visibility of sidebar for preview.",
@@ -100,24 +103,23 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@types/vscode": "^1.46.0"
+    "pdf-lib": "1.17.1"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^12.12.21",
-    "@typescript-eslint/eslint-plugin": "^2.28.0",
-    "@typescript-eslint/parser": "^2.28.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.1.3",
-    "mocha": "^10.1.0",
-    "prettier": "^2.0.4",
-    "typescript": "^3.7.3",
-    "vsce": "^2.15.0",
-    "vscode-dts": "^0.3.1",
-    "vscode-test": "^1.3.0"
+    "@types/mocha": "10.0.1",
+    "@types/node": "12.12.21",
+    "@types/vscode": "1.103.0",
+    "glob": "^11.1.0",
+    "markdown-it": "14.1.1",
+    "prettier": "2.0.4",
+    "typescript": "5.9.2",
+    "vscode-dts": "0.3.1",
+    "vscode-test": "1.3.0"
   },
   "extensionKind": [
     "ui"
+  ],
+  "activationEvents": [
+    "onCommand:pdf-viewer.open"
   ]
 }
