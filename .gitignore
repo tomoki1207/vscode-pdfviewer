@@ -2,3 +2,12 @@ out
 node_modules
 *.vsix
 .vscode-test/
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tgz
+coverage/
+.nyc_output/
+lib/**/*.map

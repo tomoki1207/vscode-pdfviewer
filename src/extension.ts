@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import { PdfCustomProvider } from './pdfProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
-  const extensionRoot = vscode.Uri.file(context.extensionPath);
-  // Register our custom editor provider
-  const provider = new PdfCustomProvider(extensionRoot);
+  
+  
+  const provider = new PdfCustomProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerCustomEditorProvider(
       PdfCustomProvider.viewType,

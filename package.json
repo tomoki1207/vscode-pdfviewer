@@ -1,123 +1,124 @@
 {
-  "name": "pdf",
-  "displayName": "vscode-pdf",
-  "description": "Display pdf file in VSCode.",
-  "version": "1.2.2",
-  "publisher": "tomoki1207",
-  "engines": {
-    "vscode": "^1.46.0"
-  },
-  "categories": [
-    "Programming Languages"
-  ],
-  "keywords": [
-    "pdf",
-    "viewer"
-  ],
-  "icon": "vscode-pdf.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
-  },
-  "activationEvents": [
-    "onCustomEditor:pdf.preview"
-  ],
-  "main": "./out/src/extension",
-  "contributes": {
-    "capabilities": {
-      "untrustedWorkspaces": {
-        "supported": true
-      }
-    },
-    "customEditors": [
-      {
-        "viewType": "pdf.preview",
-        "displayName": "Pdf Preview",
-        "selector": [
-          {
-            "filenamePattern": "*.pdf"
-          }
-        ]
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "PDF Preview",
-      "properties": {
-        "pdf-preview.default.cursor": {
-          "markdownDescription": "The default cursor tool for preview.",
-          "type": "string",
-          "default": "select",
-          "enum": [
-            "select",
-            "hand"
-          ]
-        },
-        "pdf-preview.default.scale": {
-          "markdownDescription": "The default zoom level for preview. Allowed values are `auto`, `page-actual`, `page-fit`, `page-width`, and 1-based scale values. (`1.0` means 100%)",
-          "type": "string",
-          "default": "auto",
-          "pattern": "^(\\d+(?:\\.\\d+)?|auto|page-actual|page-fit|page-width)$"
-        },
-        "pdf-preview.default.sidebar": {
-          "markdownDescription": "Show the sidebar on load. The default visibility of sidebar for preview.",
-          "type": "boolean",
-          "default": false
-        },
-        "pdf-preview.default.scrollMode": {
-          "markdownDescription": "The default scroll mode for preview.",
-          "type": "string",
-          "default": "vertical",
-          "enum": [
-            "vertical",
-            "horizontal",
-            "wrapped"
-          ]
-        },
-        "pdf-preview.default.spreadMode": {
-          "markdownDescription": "The default spread mode for preview.",
-          "type": "string",
-          "default": "none",
-          "enum": [
-            "none",
-            "odd",
-            "even"
-          ]
-        }
-      }
-    }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -w -p ./",
-    "pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js",
-    "lint": "eslint -c .eslintrc.json --ext .ts ./src",
-    "package": "vsce package"
-  },
-  "dependencies": {
-    "@types/vscode": "^1.46.0"
-  },
-  "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^12.12.21",
-    "@typescript-eslint/eslint-plugin": "^2.28.0",
-    "@typescript-eslint/parser": "^2.28.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.1.3",
-    "mocha": "^10.1.0",
-    "prettier": "^2.0.4",
-    "typescript": "^3.7.3",
-    "vsce": "^2.15.0",
-    "vscode-dts": "^0.3.1",
-    "vscode-test": "^1.3.0"
-  },
-  "extensionKind": [
-    "ui"
-  ]
+    "name":  "pdf",
+    "displayName":  "vscode-pdf",
+    "description":  "Display pdf file in VSCode.",
+    "version":  "1.2.2",
+    "publisher":  "tomoki1207",
+    "engines":  {
+                    "vscode":  "^1.46.0"
+                },
+    "categories":  [
+                       "Programming Languages"
+                   ],
+    "keywords":  [
+                     "pdf",
+                     "viewer"
+                 ],
+    "icon":  "vscode-pdf.png",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "https://github.com/tomoki1207/vscode-pdfviewer.git"
+                   },
+    "bugs":  {
+                 "url":  "https://github.com/tomoki1207/vscode-pdfviewer/issues"
+             },
+    "activationEvents":  [
+                             "onCustomEditor:pdf.preview"
+                         ],
+    "main":  "./out/src/extension",
+    "contributes":  {
+                        "capabilities":  {
+                                             "untrustedWorkspaces":  {
+                                                                         "supported":  true
+                                                                     }
+                                         },
+                        "customEditors":  [
+                                              {
+                                                  "viewType":  "pdf.preview",
+                                                  "displayName":  "Pdf Preview",
+                                                  "selector":  [
+                                                                   {
+                                                                       "filenamePattern":  "*.pdf"
+                                                                   }
+                                                               ]
+                                              }
+                                          ],
+                        "configuration":  {
+                                              "type":  "object",
+                                              "title":  "PDF Preview",
+                                              "properties":  {
+                                                                 "pdf-preview.default.cursor":  {
+                                                                                                    "markdownDescription":  "The default cursor tool for preview.",
+                                                                                                    "type":  "string",
+                                                                                                    "default":  "select",
+                                                                                                    "enum":  [
+                                                                                                                 "select",
+                                                                                                                 "hand"
+                                                                                                             ]
+                                                                                                },
+                                                                 "pdf-preview.default.scale":  {
+                                                                                                   "markdownDescription":  "The default zoom level for preview. Allowed values are `auto`, `page-actual`, `page-fit`, `page-width`, and 1-based scale values. (`1.0` means 100%)",
+                                                                                                   "type":  "string",
+                                                                                                   "default":  "auto",
+                                                                                                   "pattern":  "^(\\d+(?:\\.\\d+)?|auto|page-actual|page-fit|page-width)$"
+                                                                                               },
+                                                                 "pdf-preview.default.sidebar":  {
+                                                                                                     "markdownDescription":  "Show the sidebar on load. The default visibility of sidebar for preview.",
+                                                                                                     "type":  "boolean",
+                                                                                                     "default":  false
+                                                                                                 },
+                                                                 "pdf-preview.default.scrollMode":  {
+                                                                                                        "markdownDescription":  "The default scroll mode for preview.",
+                                                                                                        "type":  "string",
+                                                                                                        "default":  "vertical",
+                                                                                                        "enum":  [
+                                                                                                                     "vertical",
+                                                                                                                     "horizontal",
+                                                                                                                     "wrapped"
+                                                                                                                 ]
+                                                                                                    },
+                                                                 "pdf-preview.default.spreadMode":  {
+                                                                                                        "markdownDescription":  "The default spread mode for preview.",
+                                                                                                        "type":  "string",
+                                                                                                        "default":  "none",
+                                                                                                        "enum":  [
+                                                                                                                     "none",
+                                                                                                                     "odd",
+                                                                                                                     "even"
+                                                                                                                 ]
+                                                                                                    }
+                                                             }
+                                          }
+                    },
+    "scripts":  {
+                    "vscode:prepublish":  "npm run compile",
+                    "compile":  "tsc -p ./",
+                    "watch":  "tsc -w -p ./",
+                    "pretest":  "npm run compile",
+                    "test":  "node ./out/test/runTest.js",
+                    "lint":  "eslint -c .eslintrc.json --ext .ts ./src",
+                    "package":  "vsce package"
+                },
+    "dependencies":  {
+                         "@types/vscode":  "^1.46.0"
+                     },
+    "devDependencies":  {
+                            "@types/mocha":  "^10.0.1",
+                            "@types/node":  "^12.12.21",
+                            "@typescript-eslint/eslint-plugin":  "^2.28.0",
+                            "@typescript-eslint/parser":  "^2.28.0",
+                            "eslint":  "^6.8.0",
+                            "eslint-config-prettier":  "^6.10.1",
+                            "eslint-plugin-prettier":  "^3.1.3",
+                            "mocha":  "^10.1.0",
+                            "prettier":  "^2.0.4",
+                            "typescript":  "^3.7.3",
+                            "vscode-dts":  "^0.3.1",
+                            "vscode-test":  "^1.3.0",
+                            "@types/glob":  "^8.1.0",
+                            "@vscode/vsce":  "^2.22.0"
+                        },
+    "extensionKind":  [
+                          "ui"
+                      ]
 }

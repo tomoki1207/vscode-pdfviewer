@@ -7,3 +7,10 @@ src/**
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md
+
+.github/**
+.editorconfig
+.eslintrc.json
+.eslintignore
+CHANGELOG.md
+lib/web/debugger.*
