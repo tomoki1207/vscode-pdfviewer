@@ -10,6 +10,7 @@ type PreviewState = 'Disposed' | 'Visible' | 'Active';
 
 export class PdfPreview extends Disposable {
   private _previewState: PreviewState = 'Visible';
+  private _reloadTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(
     private readonly extensionRoot: vscode.Uri,
@@ -77,9 +78,17 @@ export class PdfPreview extends Disposable {
   }
 
   private reload(): void {
-    if (this._previewState !== 'Disposed') {
-      this.webviewEditor.webview.postMessage({ type: 'reload' });
+    // A single build rewrites the PDF in several bursts; coalesce the
+    // change events so the webview reloads once, from the final bytes.
+    if (this._reloadTimer !== undefined) {
+      clearTimeout(this._reloadTimer);
     }
+    this._reloadTimer = setTimeout(() => {
+      this._reloadTimer = undefined;
+      if (this._previewState !== 'Disposed') {
+        this.webviewEditor.webview.postMessage({ type: 'reload' });
+      }
+    }, 250);
   }
 
   private update(): void {
