@@ -11,9 +11,17 @@ async function main(): Promise<void> {
     // The path to the extension test script
     // Passed to --extensionTestsPath
     const extensionTestsPath = path.resolve(__dirname, './suite/index');
+    const testUserDataDir = path.resolve(
+      extensionDevelopmentPath,
+      '.vscode-test/user-data'
+    );
 
     // Download VS Code, unzip it and run the integration test
-    await runTests({ extensionDevelopmentPath, extensionTestsPath });
+    await runTests({
+      extensionDevelopmentPath,
+      extensionTestsPath,
+      launchArgs: ['--user-data-dir', testUserDataDir],
+    });
   } catch (err) {
     console.error('Failed to run tests');
     process.exit(1);

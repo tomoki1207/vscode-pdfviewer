@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Disposable } from './disposable';
+import { HighlightRectangle } from './pdfAnnotations';
 
 function escapeAttribute(value: string | vscode.Uri): string {
   return value.toString().replace(/"/g, '&quot;');
@@ -13,8 +14,11 @@ export class PdfPreview extends Disposable {
 
   constructor(
     private readonly extensionRoot: vscode.Uri,
-    private readonly resource: vscode.Uri,
-    private readonly webviewEditor: vscode.WebviewPanel
+    public readonly resource: vscode.Uri,
+    private readonly webviewEditor: vscode.WebviewPanel,
+    private readonly onHighlight: (
+      rectangles: HighlightRectangle[]
+    ) => void | Promise<void>
   ) {
     super();
     const resourceRoot = resource.with({
@@ -29,6 +33,14 @@ export class PdfPreview extends Disposable {
     this._register(
       webviewEditor.webview.onDidReceiveMessage((message) => {
         switch (message.type) {
+          case 'highlight': {
+            void this.onHighlight(message.rectangles as HighlightRectangle[]);
+            break;
+          }
+          case 'highlight-error': {
+            void vscode.window.showWarningMessage(message.message as string);
+            break;
+          }
           case 'reopen-as-text': {
             vscode.commands.executeCommand(
               'vscode.openWith',
@@ -76,9 +88,12 @@ export class PdfPreview extends Disposable {
     this.update();
   }
 
-  private reload(): void {
+  public reload(data?: Uint8Array): void {
     if (this._previewState !== 'Disposed') {
-      this.webviewEditor.webview.postMessage({ type: 'reload' });
+      this.webviewEditor.webview.postMessage({
+        type: 'reload',
+        data: data ? Buffer.from(data).toString('base64') : undefined,
+      });
     }
   }
 
@@ -136,6 +151,30 @@ export class PdfPreview extends Disposable {
     )}">
 <link rel="stylesheet" href="${resolveAsUri('lib', 'web', 'viewer.css')}">
 <link rel="stylesheet" href="${resolveAsUri('lib', 'pdf.css')}">
+<style>
+#highlight.pdf-preview-highlight {
+  width: auto;
+  padding: 0 8px;
+  color: var(--main-color);
+  font-size: 12px;
+  font-weight: 600;
+}
+#highlight.pdf-preview-highlight::before {
+  display: none;
+}
+#highlight.pdf-preview-highlight > span {
+  display: inline;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+.pdf-preview-highlight-overlay {
+  position: absolute;
+  z-index: 2;
+  background: rgba(255, 235, 59, 0.45);
+  pointer-events: none;
+}
+</style>
 <script src="${resolveAsUri('lib', 'build', 'pdf.js')}"></script>
 <script src="${resolveAsUri('lib', 'build', 'pdf.worker.js')}"></script>
 <script src="${resolveAsUri('lib', 'web', 'viewer.js')}"></script>
@@ -395,6 +434,9 @@ export class PdfPreview extends Disposable {
 
                 <div id="editorModeSeparator" class="verticalToolbarSeparator"></div>
                 </div>
+                <button id="highlight" class="toolbarButton pdf-preview-highlight" title="Highlight selected text" tabindex="34">
+                  <span>Highlight</span>
+                </button>
                 <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="48" data-l10n-id="tools" aria-expanded="false" aria-controls="secondaryToolbar">
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>

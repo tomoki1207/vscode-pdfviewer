@@ -95,12 +95,13 @@
     "compile": "tsc -p ./",
     "watch": "tsc -w -p ./",
     "pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/src/test/runTest.js",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src",
     "package": "vsce package"
   },
   "dependencies": {
-    "@types/vscode": "^1.46.0"
+    "@types/vscode": "^1.46.0",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
