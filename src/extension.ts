@@ -6,6 +6,7 @@ export function activate(context: vscode.ExtensionContext): void {
   // Register our custom editor provider
   const provider = new PdfCustomProvider(extensionRoot);
   context.subscriptions.push(
+    provider,
     vscode.window.registerCustomEditorProvider(
       PdfCustomProvider.viewType,
       provider,

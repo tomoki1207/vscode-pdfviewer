@@ -1,9 +1,9 @@
 {
-  "name": "pdf",
-  "displayName": "vscode-pdf",
-  "description": "Display pdf file in VSCode.",
+  "name": "pdf-fork",
+  "displayName": "vscode-pdf-fork",
+  "description": "Display pdf file in VSCode. Fork of tomoki1207/vscode-pdfviewer .",
   "version": "1.2.2",
-  "publisher": "tomoki1207",
+  "publisher": "sohang3112",
   "engines": {
     "vscode": "^1.46.0"
   },
@@ -17,10 +17,10 @@
   "icon": "vscode-pdf.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer.git"
+    "url": "https://github.com/sohang3112/vscode-pdfviewer.git"
   },
   "bugs": {
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
+    "url": "https://github.com/sohang3112/vscode-pdfviewer/issues"
   },
   "activationEvents": [
     "onCustomEditor:pdf.preview"
@@ -95,12 +95,13 @@
     "compile": "tsc -p ./",
     "watch": "tsc -w -p ./",
     "pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/src/test/runTest.js",
     "lint": "eslint -c .eslintrc.json --ext .ts ./src",
     "package": "vsce package"
   },
   "dependencies": {
-    "@types/vscode": "^1.46.0"
+    "@types/vscode": "^1.46.0",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
