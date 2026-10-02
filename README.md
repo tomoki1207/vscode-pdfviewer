@@ -1,6 +1,6 @@
 # pdf
 
-Display pdf in VSCode.
+Display pdf in VSCode. Fork of https://github.com/tomoki1207/vscode-pdfviewer .
 
 ![screenshot](https://user-images.githubusercontent.com/3643499/84454816-98fcd600-ac96-11ea-822c-3ae1e1599a13.gif)
 
