@@ -1,16 +1,13 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es6",
-        "outDir": "out",
-        "lib": [
-            "es6"
-        ],
-        "sourceMap": true,
-        "rootDir": "."
-    },
-    "exclude": [
-        "node_modules",
-        ".vscode-test"
-    ]
+  "compilerOptions": {
+    "module": "node20",
+    "target": "ES2022",
+    "outDir": "out",
+    "lib": ["ES2022"],
+    "types": ["node", "mocha"],
+    "sourceMap": true,
+    "rootDir": ".",
+    "strict": true
+  },
+  "include": ["src"]
 }

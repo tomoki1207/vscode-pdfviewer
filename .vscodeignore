@@ -1,9 +1,14 @@
 .vscode/**
 .vscode-test/**
-out/test/**
-test/**
+.vscode-test.mjs
+out/src/test/**
 src/**
 **/*.map
+.editorconfig
 .gitignore
+.nvmrc
+.prettierrc.json
+eslint.config.mjs
 tsconfig.json
 vsc-extension-quickstart.md
+IMPROVEMENT_PLAN.md

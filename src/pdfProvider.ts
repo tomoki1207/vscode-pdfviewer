@@ -39,7 +39,7 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
     });
   }
 
-  public get activePreview(): PdfPreview {
+  public get activePreview(): PdfPreview | undefined {
     return this._activePreview;
   }
 
