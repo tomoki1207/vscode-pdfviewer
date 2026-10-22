@@ -45,10 +45,6 @@ function waitForViewer(
   });
 }
 
-function documentLoaded(api: PdfPreviewApi, uri: vscode.Uri): Promise<void> {
-  return waitForViewer(api, uri, (m) => m.type === 'documentloaded');
-}
-
 function pagesRendered(
   api: PdfPreviewApi,
   uri: vscode.Uri,
@@ -61,6 +57,71 @@ function pagesRendered(
     }
     return pending.size === 0;
   });
+}
+
+// A new document, not just another render of the current one
+function reloaded(api: PdfPreviewApi, uri: vscode.Uri): Promise<void> {
+  let loaded = false;
+  return waitForViewer(api, uri, (m) => {
+    loaded ||= m.type === 'documentloaded';
+    return loaded && m.type === 'pagerendered' && m.pageNumber === 1;
+  });
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function findTab(uri: vscode.Uri): vscode.Tab | undefined {
+  return vscode.window.tabGroups.all
+    .flatMap((group) => group.tabs)
+    .find(
+      (tab) =>
+        tab.input instanceof vscode.TabInputCustom &&
+        tab.input.uri.toString() === uri.toString()
+    );
+}
+
+// Counts the documents the viewer of `uri` opens until disposed
+function countLoads(
+  api: PdfPreviewApi,
+  uri: vscode.Uri
+): { readonly count: number; dispose(): void } {
+  let count = 0;
+  const listener = api.onDidReceiveViewerMessage(({ uri: from, message }) => {
+    if (
+      from.toString() === uri.toString() &&
+      message.type === 'documentloaded'
+    ) {
+      count++;
+    }
+  });
+  return {
+    get count() {
+      return count;
+    },
+    dispose: () => listener.dispose(),
+  };
+}
+
+// Runs `body` with a copy of sample.pdf in a temporary folder
+async function withTempPdf(
+  body: (file: string, uri: vscode.Uri) => Promise<void>
+): Promise<void> {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdf-preview-'));
+  const file = path.join(dir, 'temp.pdf');
+  fs.copyFileSync(path.join(fixtures, 'sample.pdf'), file);
+  try {
+    await body(file, vscode.Uri.file(file));
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+async function openAndWait(api: PdfPreviewApi, uri: vscode.Uri): Promise<void> {
+  const rendered = pagesRendered(api, uri, [1]);
+  await vscode.commands.executeCommand('vscode.open', uri);
+  await rendered;
 }
 
 suite('PDF preview', () => {
@@ -87,9 +148,11 @@ suite('PDF preview', () => {
   });
 
   test('renders CJK text, CMYK colours and JPEG 2000 images', async () => {
-    // Small enough for all three pages to be visible, and so rendered
+    // Small enough for all three pages to be visible, and so rendered. The
+    // sidebar adds thumbnails, which have to get past the CSP too
     const config = vscode.workspace.getConfiguration('pdf-preview');
     await config.update('default.scale', '0.2', true);
+    await config.update('default.sidebar', true, true);
     try {
       const api = await getApi();
       const uri = vscode.Uri.file(path.join(fixtures, 'features.pdf'));
@@ -98,25 +161,79 @@ suite('PDF preview', () => {
       await rendered;
     } finally {
       await config.update('default.scale', undefined, true);
+      await config.update('default.sidebar', undefined, true);
     }
   });
 
   test('reloads when the file changes', async () => {
     const api = await getApi();
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdf-preview-'));
-    const file = path.join(dir, 'reload.pdf');
-    fs.copyFileSync(path.join(fixtures, 'sample.pdf'), file);
-    const uri = vscode.Uri.file(file);
-    try {
-      const loaded = documentLoaded(api, uri);
-      await vscode.commands.executeCommand('vscode.open', uri);
-      await loaded;
+    await withTempPdf(async (file, uri) => {
+      await openAndWait(api, uri);
 
-      const reloaded = pagesRendered(api, uri, [1]);
+      const reload = reloaded(api, uri);
       fs.copyFileSync(path.join(fixtures, 'sample.pdf'), file);
-      await reloaded;
-    } finally {
-      fs.rmSync(dir, { recursive: true, force: true });
-    }
+      await reload;
+    });
+  });
+
+  test('reloads once for a burst of writes', async () => {
+    const api = await getApi();
+    await withTempPdf(async (file, uri) => {
+      await openAndWait(api, uri);
+
+      const loads = countLoads(api, uri);
+      try {
+        const reload = reloaded(api, uri);
+        for (let i = 0; i < 5; i++) {
+          fs.copyFileSync(path.join(fixtures, 'sample.pdf'), file);
+          await delay(30);
+        }
+        await reload;
+        await delay(1000);
+        assert.strictEqual(loads.count, 1);
+      } finally {
+        loads.dispose();
+      }
+    });
+  });
+
+  suite('when the file is deleted', () => {
+    const config = (): vscode.WorkspaceConfiguration =>
+      vscode.workspace.getConfiguration('pdf-preview');
+
+    setup(async () => {
+      await config().update('closeOnDeleteDelay', 500, true);
+    });
+    teardown(async () => {
+      await config().update('closeOnDeleteDelay', undefined, true);
+    });
+
+    test('closes the preview after the grace period', async () => {
+      const api = await getApi();
+      await withTempPdf(async (file, uri) => {
+        await openAndWait(api, uri);
+        fs.rmSync(file);
+        await delay(100);
+        assert.ok(findTab(uri), 'closed before the grace period ended');
+        for (let i = 0; i < 50 && findTab(uri); i++) {
+          await delay(100);
+        }
+        assert.strictEqual(findTab(uri), undefined);
+      });
+    });
+
+    test('keeps the preview open and reloads if the file comes back', async () => {
+      const api = await getApi();
+      await withTempPdf(async (file, uri) => {
+        await openAndWait(api, uri);
+        const reload = reloaded(api, uri);
+        fs.rmSync(file);
+        await delay(100);
+        fs.copyFileSync(path.join(fixtures, 'sample.pdf'), file);
+        await reload;
+        await delay(1000);
+        assert.ok(findTab(uri));
+      });
+    });
   });
 });

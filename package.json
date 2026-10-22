@@ -86,6 +86,12 @@
             "odd",
             "even"
           ]
+        },
+        "pdf-preview.closeOnDeleteDelay": {
+          "markdownDescription": "Milliseconds to wait before closing the preview when its file is deleted. If the file is recreated in the meantime (as many build tools do), the preview reloads instead. `-1` keeps the preview open.",
+          "type": "integer",
+          "default": 2000,
+          "minimum": -1
         }
       }
     }
