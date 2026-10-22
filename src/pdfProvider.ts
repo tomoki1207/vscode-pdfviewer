@@ -1,11 +1,21 @@
 import * as vscode from 'vscode';
-import { PdfPreview } from './pdfPreview';
+import { PdfPreview, ViewerMessage } from './pdfPreview';
+
+export interface ViewerMessageEvent {
+  readonly uri: vscode.Uri;
+  readonly message: ViewerMessage;
+}
 
 export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
   public static readonly viewType = 'pdf.preview';
 
   private readonly _previews = new Set<PdfPreview>();
   private _activePreview: PdfPreview | undefined;
+
+  private readonly _onDidReceiveViewerMessage =
+    new vscode.EventEmitter<ViewerMessageEvent>();
+  public readonly onDidReceiveViewerMessage =
+    this._onDidReceiveViewerMessage.event;
 
   constructor(private readonly extensionRoot: vscode.Uri) {}
 
@@ -20,7 +30,9 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
     const preview = new PdfPreview(
       this.extensionRoot,
       document.uri,
-      webviewEditor
+      webviewEditor,
+      (message) =>
+        this._onDidReceiveViewerMessage.fire({ uri: document.uri, message })
     );
     this._previews.add(preview);
     this.setActivePreview(preview);
@@ -45,5 +57,9 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
 
   private setActivePreview(value: PdfPreview | undefined): void {
     this._activePreview = value;
+  }
+
+  public dispose(): void {
+    this._onDidReceiveViewerMessage.dispose();
   }
 }

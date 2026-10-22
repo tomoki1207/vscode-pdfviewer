@@ -1,14 +1,52 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+/* Overrides for the stock PDF.js viewer.html; loaded after viewer.css */
+
+/* Actions that make no sense in a read-only VS Code editor: open, print,
+   save, presentation mode (fullscreen is not allowed in webviews), the
+   "current view" link and the annotation editors */
+#editorModeButtons,
+#editorModeSeparator,
+.toolbarHorizontalGroup:has(> #printButton),
+.toolbarHorizontalGroup:has(> #printButton) + .verticalToolbarSeparator,
+#secondaryOpenFile,
+#secondaryOpenFile + .visibleMediumView,
+#secondaryOpenFile + .visibleMediumView + .horizontalToolbarSeparator,
+#presentationMode,
+#viewBookmark,
+#viewBookmarkSeparator {
+  display: none !important;
 }
-#pdf-viewer {
-  display: block;
-  border: none;
-  overflow: hidden;
-  position: absolute;
-  width: 100%;
-  height: 100%;
+
+/* Diagnostics panel built by main.js */
+#pdf-preview-errors {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100000;
+  max-height: 40%;
+  overflow: auto;
+  padding: 8px 12px;
+  font: 12px/1.5 monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #eaeaea;
+  background: #1e1e1e;
+  border-top: 2px solid #f14c4c;
+}
+#pdf-preview-errors > header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+#pdf-preview-errors > header > button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid #555;
+  cursor: pointer;
+}
+#pdf-preview-errors > div {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #444;
 }
