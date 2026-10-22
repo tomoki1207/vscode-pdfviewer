@@ -13,3 +13,4 @@ tsconfig.json
 vsc-extension-quickstart.md
 IMPROVEMENT_PLAN.md
 scripts/**
+.github/**

@@ -109,15 +109,6 @@ export class PdfPreview extends Disposable {
           this.sendDocument(true);
           return;
         }
-        if (message?.type === 'reopen-as-text') {
-          vscode.commands.executeCommand(
-            'vscode.openWith',
-            this.resource,
-            'default',
-            webviewEditor.viewColumn
-          );
-          return;
-        }
         const viewerMessage = parseViewerMessage(message);
         if (viewerMessage) {
           this.onViewerMessage(viewerMessage);

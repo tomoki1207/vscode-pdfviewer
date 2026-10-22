@@ -1,0 +1,46 @@
+name: PDF.js update check
+
+# PDF.js is vendored in lib/, so neither Dependabot nor npm audit sees it
+on:
+  schedule:
+    - cron: '17 6 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Open an issue if a newer PDF.js is released
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(cat lib/PDFJS_VERSION)
+          latest=$(gh api repos/mozilla/pdf.js/releases/latest --jq '.tag_name | ltrimstr("v")')
+          if [[ $latest == "$current" ]]; then
+            echo "PDF.js $current is the latest release"
+            exit 0
+          fi
+
+          title="Update PDF.js to $latest"
+          existing=$(gh issue list --state all --limit 200 --json title \
+            --jq "map(select(.title == \"$title\")) | length")
+          if [[ $existing != 0 ]]; then
+            echo "An issue for PDF.js $latest already exists"
+            exit 0
+          fi
+
+          digest=$(gh api "repos/mozilla/pdf.js/releases/tags/v$latest" \
+            --jq ".assets[] | select(.name == \"pdfjs-$latest-dist.zip\") | .digest | ltrimstr(\"sha256:\")")
+          gh issue create --title "$title" --body-file - <<EOF
+          PDF.js [$latest](https://github.com/mozilla/pdf.js/releases/tag/v$latest) is out; \`lib/\` has $current.
+
+          - [ ] Read the release notes for security fixes and breaking changes
+          - [ ] \`scripts/update-pdfjs.sh $latest $digest\` and add the digest to \`KNOWN_SHA256\` in the script
+          - [ ] Check that the build still runs on the minimum VS Code (\`engines.vscode\`); raise it if the new build needs newer JS features
+          - [ ] Tests pass; check the viewer by hand
+          EOF
