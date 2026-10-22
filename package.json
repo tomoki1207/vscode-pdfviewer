@@ -1,29 +1,34 @@
 {
-  "name": "pdf",
-  "displayName": "vscode-pdf",
-  "description": "Display pdf file in VSCode.",
-  "version": "1.2.2",
-  "publisher": "tomoki1207",
+  "name": "pdf-viewer",
+  "displayName": "PDF Viewer (PDF.js 6)",
+  "description": "View PDF files in VS Code, with an up-to-date PDF.js and a locked-down webview.",
+  "version": "2.0.0",
+  "publisher": "macromeer",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.123.0"
   },
   "categories": [
-    "Programming Languages"
+    "Visualization",
+    "Other"
   ],
   "keywords": [
     "pdf",
-    "viewer"
+    "viewer",
+    "preview",
+    "latex",
+    "typst"
   ],
   "icon": "vscode-pdf.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer.git"
+    "url": "https://github.com/macromeer/vscode-pdfviewer.git"
   },
   "bugs": {
-    "url": "https://github.com/tomoki1207/vscode-pdfviewer/issues"
+    "url": "https://github.com/macromeer/vscode-pdfviewer/issues"
   },
   "activationEvents": [
-    "onCustomEditor:pdf.preview"
+    "onCustomEditor:macromeer.pdfPreview"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -34,8 +39,8 @@
     },
     "customEditors": [
       {
-        "viewType": "pdf.preview",
-        "displayName": "Pdf Preview",
+        "viewType": "macromeer.pdfPreview",
+        "displayName": "PDF Viewer",
         "selector": [
           {
             "filenamePattern": "*.pdf"

@@ -1,5 +1,45 @@
 # Changelog
 
+## 2.0.0 (2026/10/22)
+
+First release of the maintained fork, published as `macromeer.pdf-viewer`. See the README for switching from `tomoki1207.pdf`.
+
+### Security
+
+- Update PDF.js from 3.1.81 to 6.4.299. Fixes [CVE-2024-4367](https://codeanlabs.com/2024/05/cve-2024-4367-arbitrary-js-execution-in-pdf-js/) (arbitrary JavaScript through a crafted font, fixed in PDF.js 4.2.67) and other parser bugs fixed since.
+- Disable PDF scripting and annotation editing, and remove the scripting sandbox from the package.
+- Strict Content Security Policy: scripts only with a per-load nonce, no `'unsafe-inline'` for scripts or styles.
+- The webview can no longer read the PDF's folder; the PDF is sent to it as bytes.
+- Validate messages from the webview and all settings (relevant in untrusted workspaces).
+- Escape all special characters in HTML attributes.
+
+### Changes
+
+- **Breaking:** requires VS Code 1.123 or later.
+- **Breaking:** the custom editor ID is now `macromeer.pdfPreview` (was `pdf.preview`). Update `workbench.editorAssociations` if you use it.
+- Auto-reload rewritten: keeps page, zoom, scroll position and sidebar; rapid rebuilds end on the latest version; half-written files are skipped; file events are debounced.
+- Auto-reload now also works for PDFs outside the workspace folders.
+- New setting `pdf-preview.closeOnDeleteDelay`: when the file is deleted and recreated within this time (default 2 s), the tab stays open and reloads.
+- `pdf-preview.default.*` settings are applied reliably, including the sidebar; `default.scale` values like `1.25` mean 125 %.
+- Open links like `file.pdf#page=4` and `file.pdf#nameddest=intro` at that page or destination.
+- Ctrl/Cmd+P, Ctrl/Cmd+Shift+P, Ctrl/Cmd+O and Ctrl/Cmd+S are left to VS Code instead of opening PDF.js's print dialog, file picker or download.
+- Errors are shown in the viewer and logged to the new *PDF Preview* output channel.
+- Removed the unused "reopen as text" message; use *Reopen Editor With…*.
+- Toolchain: TypeScript 6, ESLint 10, `@vscode/vsce`, integration tests, CI and a monthly PDF.js update check.
+
+### Thank you
+
+- @cassandragargoyle PDF.js 6 port and release workflow (tomoki1207/vscode-pdfviewer#209)
+- @DABH Root cause of the broken reloads, debouncing (tomoki1207/vscode-pdfviewer#211)
+- @ricardofrantz Sidebar default (tomoki1207/vscode-pdfviewer#201)
+- @zamzterz Sidebar state across reloads (tomoki1207/vscode-pdfviewer#122)
+- @jrandolf-old Keep the tab open when a deleted file is recreated (tomoki1207/vscode-pdfviewer#114)
+- @MStachowicz Ctrl+P opening the print dialog (tomoki1207/vscode-pdfviewer#157)
+- @XV25 Popup annotation colours (tomoki1207/vscode-pdfviewer#181)
+- @przemech Named destinations (tomoki1207/vscode-pdfviewer#140)
+- @saleemadnan Escaping, `Uri.joinPath`, listener disposal (tomoki1207/vscode-pdfviewer#199, tomoki1207/vscode-pdfviewer#200)
+- @beedell-roke README fixes (tomoki1207/vscode-pdfviewer#167)
+
 ## 1.2.2 (2022/12/23)
 
 - Fix about rendering Unicode characters
