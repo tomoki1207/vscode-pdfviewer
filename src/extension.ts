@@ -8,11 +8,10 @@ export interface PdfPreviewApi {
 }
 
 export function activate(context: vscode.ExtensionContext): PdfPreviewApi {
-  const extensionRoot = vscode.Uri.file(context.extensionPath);
   const log = vscode.window.createOutputChannel('PDF Preview', { log: true });
   // Register our custom editor provider
   const settings = new Settings(context.extension.packageJSON, log);
-  const provider = new PdfCustomProvider(extensionRoot, settings);
+  const provider = new PdfCustomProvider(context.extensionUri, settings);
   context.subscriptions.push(
     log,
     provider,

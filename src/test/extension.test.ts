@@ -166,6 +166,28 @@ suite('PDF preview', () => {
     }
   });
 
+  test('opens at the location in the URI fragment', async () => {
+    // At this zoom only one page is visible, so page 4 is only rendered if
+    // the viewer went there
+    const config = vscode.workspace.getConfiguration('pdf-preview');
+    await config.update('default.scale', '3', true);
+    try {
+      const api = await getApi();
+      const file = vscode.Uri.file(path.join(fixtures, 'pages.pdf'));
+      for (const fragment of ['page=4', 'nameddest=intro', 'intro']) {
+        const uri = file.with({ fragment });
+        const rendered = pagesRendered(api, uri, [4]);
+        await vscode.commands.executeCommand('vscode.open', uri);
+        await rendered;
+        await vscode.commands.executeCommand(
+          'workbench.action.closeAllEditors'
+        );
+      }
+    } finally {
+      await config.update('default.scale', undefined, true);
+    }
+  });
+
   test('reloads when the file changes', async () => {
     const api = await getApi();
     await withTempPdf(async (file, uri) => {

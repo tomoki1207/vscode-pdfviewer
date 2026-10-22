@@ -80,15 +80,21 @@ export class PdfPreview extends Disposable {
   private _readGeneration = 0;
   private _reloadTimer: ReturnType<typeof setTimeout> | undefined;
   private _closeTimer: ReturnType<typeof setTimeout> | undefined;
+  private readonly resource: vscode.Uri;
+  // Where the preview opens: file.pdf#page=5, #nameddest=intro etc., in the
+  // syntax of PDF.js's URL hash
+  private readonly fragment: string;
 
   constructor(
     private readonly extensionRoot: vscode.Uri,
     private readonly settings: Settings,
-    private readonly resource: vscode.Uri,
+    uri: vscode.Uri,
     private readonly webviewEditor: vscode.WebviewPanel,
     private readonly onViewerMessage: (message: ViewerMessage) => void
   ) {
     super();
+    this.resource = uri.with({ fragment: '' });
+    this.fragment = uri.fragment;
     webviewEditor.webview.options = {
       enableScripts: true,
       // The PDF is posted to the webview as bytes, so it needs no access to
@@ -106,7 +112,7 @@ export class PdfPreview extends Disposable {
         if (message?.type === 'reopen-as-text') {
           vscode.commands.executeCommand(
             'vscode.openWith',
-            resource,
+            this.resource,
             'default',
             webviewEditor.viewColumn
           );
@@ -136,8 +142,8 @@ export class PdfPreview extends Disposable {
     const watcher = this._register(
       vscode.workspace.createFileSystemWatcher(
         new vscode.RelativePattern(
-          vscode.Uri.joinPath(resource, '..'),
-          resource.path.split('/').pop() ?? ''
+          vscode.Uri.joinPath(this.resource, '..'),
+          this.resource.path.split('/').pop() ?? ''
         )
       )
     );
@@ -283,6 +289,7 @@ export class PdfPreview extends Disposable {
 
     const settings = {
       fileName: this.resource.path.split('/').pop(),
+      fragment: this.fragment,
       workerSrc: libUri('build', 'pdf.worker.mjs'),
       cMapUrl: libDirUri('web', 'cmaps'),
       standardFontDataUrl: libDirUri('web', 'standard_fonts'),

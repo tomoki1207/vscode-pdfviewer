@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { disposeAll } from './disposable';
 import { PdfPreview, ViewerMessage } from './pdfPreview';
 import { Settings } from './settings';
 
@@ -42,18 +43,25 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
     this._previews.add(preview);
     this.setActivePreview(preview);
 
-    webviewEditor.onDidDispose(() => {
-      preview.dispose();
-      this._previews.delete(preview);
-    });
-
-    webviewEditor.onDidChangeViewState(() => {
-      if (webviewEditor.active) {
-        this.setActivePreview(preview);
-      } else if (this._activePreview === preview && !webviewEditor.active) {
-        this.setActivePreview(undefined);
-      }
-    });
+    const subscriptions = [
+      webviewEditor.onDidChangeViewState(() => {
+        if (webviewEditor.active) {
+          this.setActivePreview(preview);
+        } else if (this._activePreview === preview) {
+          this.setActivePreview(undefined);
+        }
+      }),
+    ];
+    subscriptions.push(
+      webviewEditor.onDidDispose(() => {
+        preview.dispose();
+        this._previews.delete(preview);
+        if (this._activePreview === preview) {
+          this.setActivePreview(undefined);
+        }
+        disposeAll(subscriptions);
+      })
+    );
   }
 
   public get activePreview(): PdfPreview | undefined {
