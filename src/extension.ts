@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { PdfCustomProvider, ViewerMessageEvent } from './pdfProvider';
+import { Settings } from './settings';
 
 export interface PdfPreviewApi {
   // Used by the integration tests to observe the viewer
@@ -10,7 +11,8 @@ export function activate(context: vscode.ExtensionContext): PdfPreviewApi {
   const extensionRoot = vscode.Uri.file(context.extensionPath);
   const log = vscode.window.createOutputChannel('PDF Preview', { log: true });
   // Register our custom editor provider
-  const provider = new PdfCustomProvider(extensionRoot);
+  const settings = new Settings(context.extension.packageJSON, log);
+  const provider = new PdfCustomProvider(extensionRoot, settings);
   context.subscriptions.push(
     log,
     provider,

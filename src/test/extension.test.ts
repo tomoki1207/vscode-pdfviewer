@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import type { PdfPreviewApi } from '../extension';
 import type { ViewerMessage } from '../pdfPreview';
+import { Settings } from '../settings';
 
 const fixtures = path.resolve(__dirname, '../../../src/test/fixtures');
 
@@ -194,6 +195,63 @@ suite('PDF preview', () => {
       } finally {
         loads.dispose();
       }
+    });
+  });
+
+  suite('settings', () => {
+    const config = (): vscode.WorkspaceConfiguration =>
+      vscode.workspace.getConfiguration('pdf-preview');
+    const invalid: Record<string, unknown> = {
+      'default.cursor': 'laser',
+      'default.scale': '125%',
+      'default.sidebar': 'yes',
+      'default.scrollMode': ['wrapped'],
+      'default.spreadMode': 42,
+      closeOnDeleteDelay: 1.5,
+    };
+
+    function settings(): Settings {
+      const extension = vscode.extensions.getExtension('tomoki1207.pdf');
+      assert.ok(extension);
+      return new Settings(extension.packageJSON);
+    }
+
+    teardown(async () => {
+      for (const key of Object.keys(invalid)) {
+        await config().update(key, undefined, true);
+      }
+    });
+
+    test('uses valid values', async () => {
+      await config().update('default.scale', '1.25', true);
+      await config().update('closeOnDeleteDelay', -1, true);
+      assert.strictEqual(settings().get('default.scale'), '1.25');
+      assert.strictEqual(settings().get('closeOnDeleteDelay'), -1);
+    });
+
+    test('falls back to the defaults for invalid values', async () => {
+      for (const [key, value] of Object.entries(invalid)) {
+        await config().update(key, value, true);
+      }
+      const s = settings();
+      for (const [key, value] of Object.entries(invalid)) {
+        // VS Code stores the value as is
+        assert.deepStrictEqual(config().inspect(key)?.globalValue, value, key);
+        assert.strictEqual(
+          s.get(key),
+          config().inspect(key)?.defaultValue,
+          key
+        );
+      }
+    });
+
+    test('renders with invalid values', async () => {
+      for (const [key, value] of Object.entries(invalid)) {
+        await config().update(key, value, true);
+      }
+      const api = await getApi();
+      const uri = vscode.Uri.file(path.join(fixtures, 'sample.pdf'));
+      await openAndWait(api, uri);
     });
   });
 

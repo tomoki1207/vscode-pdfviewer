@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { PdfPreview, ViewerMessage } from './pdfPreview';
+import { Settings } from './settings';
 
 export interface ViewerMessageEvent {
   readonly uri: vscode.Uri;
@@ -17,7 +18,10 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
   public readonly onDidReceiveViewerMessage =
     this._onDidReceiveViewerMessage.event;
 
-  constructor(private readonly extensionRoot: vscode.Uri) {}
+  constructor(
+    private readonly extensionRoot: vscode.Uri,
+    private readonly settings: Settings
+  ) {}
 
   public openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
     return { uri, dispose: (): void => {} };
@@ -29,6 +33,7 @@ export class PdfCustomProvider implements vscode.CustomReadonlyEditorProvider {
   ): Promise<void> {
     const preview = new PdfPreview(
       this.extensionRoot,
+      this.settings,
       document.uri,
       webviewEditor,
       (message) =>

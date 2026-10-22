@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Disposable } from './disposable';
+import { Settings } from './settings';
 
 const ATTRIBUTE_ESCAPES: Record<string, string> = {
   '&': '&amp;',
@@ -50,19 +51,6 @@ const MAX_ERROR_LENGTH = 4000;
 // Build tools write the PDF in several bursts; reload once, after the last
 const RELOAD_DEBOUNCE_MS = 250;
 
-const DEFAULT_CLOSE_ON_DELETE_DELAY_MS = 2000;
-
-// `pdf-preview.closeOnDeleteDelay`, which VS Code does not validate against
-// the schema: milliseconds, or -1 to never close
-function closeOnDeleteDelay(): number {
-  const value = vscode.workspace
-    .getConfiguration('pdf-preview')
-    .get<unknown>('closeOnDeleteDelay');
-  return Number.isInteger(value) && (value as number) >= -1
-    ? (value as number)
-    : DEFAULT_CLOSE_ON_DELETE_DELAY_MS;
-}
-
 function parseViewerMessage(message: unknown): ViewerMessage | undefined {
   if (typeof message !== 'object' || message === null) {
     return undefined;
@@ -95,6 +83,7 @@ export class PdfPreview extends Disposable {
 
   constructor(
     private readonly extensionRoot: vscode.Uri,
+    private readonly settings: Settings,
     private readonly resource: vscode.Uri,
     private readonly webviewEditor: vscode.WebviewPanel,
     private readonly onViewerMessage: (message: ViewerMessage) => void
@@ -203,7 +192,8 @@ export class PdfPreview extends Disposable {
     this._reloadTimer = undefined;
     clearTimeout(this._closeTimer);
     this._closeTimer = undefined;
-    const delay = closeOnDeleteDelay();
+    // Milliseconds, or -1 to never close
+    const delay = this.settings.get<number>('closeOnDeleteDelay');
     if (delay < 0) {
       return;
     }
@@ -291,7 +281,6 @@ export class PdfPreview extends Disposable {
     // PDF.js appends file names to these, so they need a trailing slash
     const libDirUri = (...p: string[]): string => `${libUri(...p)}/`;
 
-    const config = vscode.workspace.getConfiguration('pdf-preview');
     const settings = {
       fileName: this.resource.path.split('/').pop(),
       workerSrc: libUri('build', 'pdf.worker.mjs'),
@@ -301,11 +290,11 @@ export class PdfPreview extends Disposable {
       iccUrl: libDirUri('web', 'iccs'),
       imageResourcesPath: libDirUri('web', 'images'),
       defaults: {
-        cursor: config.get('default.cursor') as string,
-        scale: config.get('default.scale') as string,
-        sidebar: config.get('default.sidebar') as boolean,
-        scrollMode: config.get('default.scrollMode') as string,
-        spreadMode: config.get('default.spreadMode') as string,
+        cursor: this.settings.get<string>('default.cursor'),
+        scale: this.settings.get<string>('default.scale'),
+        sidebar: this.settings.get<boolean>('default.sidebar'),
+        scrollMode: this.settings.get<string>('default.scrollMode'),
+        spreadMode: this.settings.get<string>('default.spreadMode'),
       },
     };
 
