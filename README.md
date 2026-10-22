@@ -2,8 +2,6 @@
 
 View PDF files in VS Code. A maintained continuation of [tomoki1207/vscode-pdfviewer](https://github.com/tomoki1207/vscode-pdfviewer) (`tomoki1207.pdf`), with an up-to-date [PDF.js](https://github.com/mozilla/pdf.js) and a locked-down webview.
 
-![screenshot](https://user-images.githubusercontent.com/3643499/84454816-98fcd600-ac96-11ea-822c-3ae1e1599a13.gif)
-
 ## Features
 
 - Opens `.pdf` files in a PDF.js 6 viewer: zoom, find, thumbnails, outline, attachments, layers, sticky notes, password-protected files, CJK text and JPEG 2000 images.
@@ -41,7 +39,7 @@ The editor ID changed from `pdf.preview` to `macromeer.pdfPreview`. If your `wor
 - The webview has a strict Content Security Policy (nonce-only scripts, no inline scripts or styles) and can only read the extension's own files. The PDF is sent to it as bytes, so it has no access to the PDF's folder.
 - Messages between the webview and the extension are validated, and so are settings, which matters in untrusted workspaces.
 
-Please report security problems privately through [GitHub's security advisories](https://github.com/macromeer/vscode-pdfviewer/security/advisories/new).
+Please report security problems privately through [GitHub's security advisories](https://github.com/macromeer/pdf-viewer/security/advisories/new).
 
 ## Development
 

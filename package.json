@@ -22,10 +22,10 @@
   "icon": "vscode-pdf.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/macromeer/vscode-pdfviewer.git"
+    "url": "https://github.com/macromeer/pdf-viewer.git"
   },
   "bugs": {
-    "url": "https://github.com/macromeer/vscode-pdfviewer/issues"
+    "url": "https://github.com/macromeer/pdf-viewer/issues"
   },
   "activationEvents": [
     "onCustomEditor:macromeer.pdfPreview"
