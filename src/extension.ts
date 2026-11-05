@@ -14,6 +14,8 @@ export function activate(context: vscode.ExtensionContext): void {
           enableFindWidget: false, // default
           retainContextWhenHidden: true,
         },
+        // Allow Split Editor to open a second view of the same PDF.
+        supportsMultipleEditorsPerDocument: true,
       }
     )
   );
