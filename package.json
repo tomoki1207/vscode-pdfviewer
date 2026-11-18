@@ -77,6 +77,11 @@
             "wrapped"
           ]
         },
+        "pdf-preview.default.darkMode": {
+          "markdownDescription": "Open documents in dark page mode (dark grey pages, light grey text; images are left unchanged). Can be toggled per document from the viewer toolbar.",
+          "type": "boolean",
+          "default": false
+        },
         "pdf-preview.default.spreadMode": {
           "markdownDescription": "The default spread mode for preview.",
           "type": "string",
