@@ -113,6 +113,7 @@ export class PdfPreview extends Disposable {
         sidebar: config.get('default.sidebar') as boolean,
         scrollMode: config.get('default.scrollMode') as string,
         spreadMode: config.get('default.spreadMode') as string,
+        darkMode: config.get('default.darkMode') as boolean,
       },
     };
 
@@ -395,6 +396,9 @@ export class PdfPreview extends Disposable {
 
                 <div id="editorModeSeparator" class="verticalToolbarSeparator"></div>
                 </div>
+                <button id="darkModeToggle" class="toolbarButton" title="Toggle Dark Page Mode" tabindex="47" aria-pressed="false">
+                  <span>Dark Page Mode</span>
+                </button>
                 <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="48" data-l10n-id="tools" aria-expanded="false" aria-controls="secondaryToolbar">
                   <span data-l10n-id="tools_label">Tools</span>
                 </button>
